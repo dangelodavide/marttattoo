@@ -1,0 +1,181 @@
+:root{
+  --bg:#0b0b0b; --fg:#f6f6f6; --muted:#bdbdbd;
+  --card:#141414; --border:#1e1e1e;
+  --accent:#ffd400; --accent-contrast:#0b0b0b;
+  --radius:16px; --shadow:0 10px 30px rgba(0,0,0,.45);
+}
+
+/* ========== BASE ========== */
+*{ box-sizing:border-box }
+html,body{ height:100% }
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Noto Sans";
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+a{ color:var(--accent); text-decoration:none }
+a:hover{ text-decoration:underline }
+img{ max-width:100%; display:block }
+.container{ width:min(1100px,92vw); margin-inline:auto }
+.card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow) }
+.tiny{ color:var(--muted); font-size:12px }
+
+/* ========== BOTTONI (gialli) ========== */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  padding:12px 18px; border-radius:999px; border:0; cursor:pointer;
+  font-weight:800; background:var(--accent); color:var(--accent-contrast);
+  box-shadow:var(--shadow); transition:transform .15s ease;
+}
+.btn:hover{ transform:translateY(-1px) }
+.btn:active{ transform:none }
+.btn:focus-visible{ outline:none; box-shadow:0 0 0 3px rgba(255,212,0,.35) }
+.btn--primary{ background:var(--accent); color:var(--accent-contrast) }
+.btn--ghost{ background:transparent; color:var(--fg); border:1px solid var(--border); box-shadow:none }
+.w-full{ width:100% }
+
+/* ========== HEADER / NAV ========== */
+.site-header{
+  position:sticky; top:0; z-index:50;
+  backdrop-filter:blur(8px) saturate(1.1);
+  background:color-mix(in oklab, var(--bg) 85%, transparent);
+  border-bottom:1px solid var(--border);
+}
+.nav{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0 }
+.brand{ display:flex; align-items:center; gap:12px }
+.brand__logo{ width:40px; height:40px; border-radius:50%; border:2px solid var(--accent) }
+.brand__name{ font-weight:800; letter-spacing:.4px }
+.nav__links{ display:flex; align-items:center; gap:16px }
+.nav__burger{ display:none; background:transparent; border:1px solid var(--border); color:var(--fg); border-radius:10px; padding:8px 10px; cursor:pointer }
+.mobile-menu{ display:none; flex-direction:column; gap:12px; padding:0 4vw 12px }
+@media (max-width:760px){
+  .nav__links{ display:none } .nav__burger{ display:block } .mobile-menu{ display:flex }
+}
+
+/* ========== SEZIONI ========== */
+.section{ padding:28px 0 60px }
+.section__title{ margin:0 0 14px; font-size:clamp(22px, 3vw, 28px) }
+
+/* ========== HERO ========== */
+.hero{ text-align:center; padding:56px 0 28px }
+.hero__logo{
+  width:160px; height:160px; border-radius:50%; margin:0 auto 14px;
+  border:2px solid var(--accent); display:grid; place-items:center;
+  background:radial-gradient(120px 120px at 50% 45%, #1b1b1b, #0e0e0e);
+  box-shadow:0 0 0 8px rgba(255,212,0,.06), 0 20px 50px rgba(0,0,0,.5);
+  overflow:hidden;
+}
+.hero__logo img{ width:70%; height:auto; filter:drop-shadow(0 6px 18px rgba(255,212,0,.25)) }
+.hero__title{ margin:8px 0 4px; font-size:clamp(28px, 5vw, 44px) }
+.hero__tag{ margin:0 0 16px; color:var(--muted) }
+.hero__cta{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap }
+
+/* ========== CAROUSEL MULTI-CARD IG ========== */
+.carousel{ position:relative; overflow:hidden; border-radius:var(--radius) }
+/* pagina = gruppo di card visibili */
+.carousel__track{
+  --per:1; --gap:12px; --slide-w:calc(100%/var(--per)); --page:0;
+  display:flex; gap:var(--gap); padding:0 var(--gap);
+  transition:transform .4s ease; transform:translateX(calc(var(--page) * -100%));
+}
+.slide{ flex:0 0 var(--slide-w); max-width:var(--slide-w) }
+.slide img, .slide video{
+  display:block; width:100%; aspect-ratio:1/1; object-fit:cover;
+  border-radius:16px; background:#000;
+}
+/* controlli */
+.carousel__controls{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:space-between;
+  padding:0 8px; pointer-events:none;
+}
+.ctrl{
+  pointer-events:auto; width:46px; height:46px; border-radius:50%;
+  border:1px solid #2a2a2a; background:rgba(0,0,0,.55); color:var(--fg);
+  backdrop-filter:blur(6px); display:grid; place-items:center; cursor:pointer;
+}
+.ctrl:hover{ background:rgba(0,0,0,.72) }
+.ctrl:focus-visible{ outline:none; box-shadow:0 0 0 3px rgba(255,212,0,.35) }
+/* dots */
+.carousel__dots{
+  position:absolute; left:0; right:0; bottom:12px;
+  display:flex; gap:8px; justify-content:center; align-items:center; padding:0 8px;
+}
+.carousel__dots .dot{
+  width:10px; height:10px; border-radius:50%;
+  border:1px solid var(--accent); background:transparent; cursor:pointer; transition:transform .2s ease;
+}
+.carousel__dots .dot[aria-current="true"]{ background:var(--accent); transform:scale(1.2) }
+/* didascalia */
+.legend{ display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-top:1px solid var(--border); gap:12px }
+.legend__cap{ color:var(--muted) }
+.legend__count{ font-weight:800; color:var(--accent) }
+/* breakpoint: quante card per vista */
+@media (min-width:700px){ .carousel__track{ --per:2 } }
+@media (min-width:1100px){ .carousel__track{ --per:3 } }
+
+/* ========== STUDIO (più importante) ========== */
+.card.studio{ padding:22px; border-radius:20px }
+.studio__name{ margin:0 0 6px; font-size:20px; font-weight:900 }
+.studio__addr, .studio__meta{ margin:0 0 4px; color:var(--muted); font-size:15px }
+.studio__actions{ margin-top:14px; display:flex; gap:10px; flex-wrap:wrap }
+#studio .card.studio{ width:100% }
+
+/* ========== BOOKING GRID & CALENDAR ========== */
+.grid{ display:grid; gap:22px; grid-template-columns:1.2fr .8fr }
+@media (max-width:900px){ .grid{ grid-template-columns:1fr } }
+
+.calendar{ padding:16px; border-radius:var(--radius) }
+.cal__head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px }
+.cal__month{ margin:0; font-size:18px; letter-spacing:.4px }
+.icon{ border:1px solid #2a2a2a; background:#121212; color:var(--fg); width:38px; height:38px; border-radius:10px; display:grid; place-items:center; cursor:pointer }
+.icon:hover{ background:#191919 }
+.icon:focus-visible{ outline:none; box-shadow:0 0 0 3px rgba(255,212,0,.35) }
+.cal__week, .cal__days{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px }
+.cal__week span{ text-align:center; color:var(--muted); font-size:12px; padding:6px 0 }
+.day{
+  aspect-ratio:1/1; display:grid; place-items:center; border-radius:12px;
+  border:1px solid #1f1f1f; background:#101010; cursor:pointer; user-select:none; color:var(--fg);
+}
+.day[aria-disabled="true"]{ opacity:.35; cursor:not-allowed }
+.day[aria-selected="true"], .day:hover{ border-color:var(--accent); box-shadow:inset 0 0 0 2px var(--accent) }
+.slots{ margin-top:12px }
+.slots__title{ margin:0 0 8px }
+.slotlist{ display:flex; flex-wrap:wrap; gap:8px }
+.chip{
+  padding:8px 12px; border-radius:999px; border:1px solid #2a2a2a; cursor:pointer;
+  background:#121212; color:var(--fg);
+}
+.chip[aria-selected="true"]{ background:var(--accent); color:var(--accent-contrast); border-color:var(--accent) }
+
+/* Form */
+.form{ padding:16px; border-radius:var(--radius); display:grid; gap:12px }
+.field{ display:grid; gap:6px }
+label{ color:var(--muted); font-size:14px }
+input, textarea, select{
+  background:#0f0f0f; color:var(--fg); border:1px solid #2a2a2a; border-radius:12px;
+  padding:12px 14px; font:inherit;
+}
+input:focus-visible, textarea:focus-visible, select:focus-visible{ outline:none; box-shadow:0 0 0 3px rgba(255,212,0,.35) }
+textarea{ min-height:110px; resize:vertical }
+.summary{ display:flex; gap:16px; flex-wrap:wrap; padding:6px 0; color:var(--muted) }
+.form-msg{ color:var(--accent); font-weight:800 }
+
+/* ========== FOOTER ========== */
+.site-footer{ margin:64px 0 32px; color:var(--muted); text-align:center; font-size:14px }
+
+/* ========== LIGHTBOX ========== */
+.lightbox{
+  position:fixed; inset:0; display:none; place-items:center; z-index:1000;
+  background:color-mix(in oklab, black 70%, transparent);
+}
+.lightbox[aria-hidden="false"]{ display:grid }
+.lightbox__inner{ max-width:min(92vw,1100px); max-height:90vh }
+.lightbox__inner img, .lightbox__inner video{
+  display:block; width:auto; height:auto; max-width:100%; max-height:90vh;
+  border-radius:16px; box-shadow:var(--shadow); background:#000;
+}
+body.lb-open{ overflow:hidden }
+
+/* nascondi caption a sinistra e i dots */
+.legend__cap{ display:none !important; }
+.carousel__dots{ display:none !important; }

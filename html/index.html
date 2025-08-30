@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Emanuele Amendolaggine — Surreal Tattoo • Bitonto</title>
+  <meta name="theme-color" content="#0b0b0b" />
+  <meta name="description" content="Surreal tattoo a Bitonto. Linee cattive, ombre pulite. Presso Nico Catucci TattooShop. Prenota ora.">
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="#top" aria-label="Home">
+        <img src="../media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Logo Emanuele Amendolaggine" class="brand__logo" />
+        <span class="brand__name">Mart Tattoo</span>
+      </a>
+
+      <nav class="nav__links" aria-label="Navigazione principale">
+        <a href="#portfolio" class="nav__link">Portfolio</a>
+        <a href="#studio" class="nav__link">Studio</a>
+        <a href="#booking" class="btn btn--primary">Prenota</a>
+      </nav>
+
+      <button class="nav__burger" aria-label="Apri menù" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <div class="mobile-menu" hidden>
+      <a href="#portfolio" class="nav__link">Portfolio</a>
+      <a href="#studio" class="nav__link">Studio</a>
+      <a href="#booking" class="btn btn--primary w-full">Prenota</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero container">
+      <div class="hero__logo">
+        <img src="../media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Monogramma EA" />
+      </div>
+      <h1 class="hero__title">Surreal Tattoo • Bitonto</h1>
+      <p class="hero__tag">Tattoo artist in Bitonto — <b>Surreal blackwork</b></p>
+
+      <div class="hero__cta">
+        <a class="btn btn--primary" href="#booking">Blocca la data</a>
+      </div>
+    </section>
+
+    <section id="portfolio" class="section container">
+      <div class="section__head">
+        <h2 class="section__title">Portfolio</h2>
+        <p class="section__sub">Surrealism • Blackwork • Fine line</p>
+      </div>
+
+      <figure class="carousel card" aria-roledescription="carousel" aria-label="Galleria tatuaggi">
+        <div class="carousel__track" id="carouselTrack"></div>
+
+        <div class="carousel__controls">
+          <button class="ctrl" id="prevBtn" aria-label="Slide precedente">‹</button>
+          <button class="ctrl" id="nextBtn" aria-label="Slide successiva">›</button>
+        </div>
+
+        <div class="carousel__dots" id="dots" role="tablist" aria-label="Indicatori slides"></div>
+
+        <figcaption class="legend">
+          <span class="legend__cap" id="caption"></span>
+          <span class="legend__count" id="count">0 / 0</span>
+        </figcaption>
+      </figure>
+    </section>
+
+    <!-- STUDIO -->
+    <section id="studio" class="section container">
+      <div class="section__head">
+        <h2 class="section__title">Studio</h2>
+        <p class="section__sub">Scegli la tua sede</p>
+      </div>
+
+      <div class="card studio">
+        <div class="studio__info">
+          <h3 class="studio__name">Nico Catucci TattooShop</h3>
+          <p class="studio__addr">Via Raffaele Comes, 19 · 70032 Bitonto (BA)</p>
+          <p class="studio__meta">Lun–Sab <b>10:30–19:30</b> · Domenica chiuso</p>
+          <div class="studio__actions">
+            <a class="btn btn--primary" href="tel:+393392012755">Chiama</a>
+            <a class="btn btn--primary" target="_blank" rel="noopener" href="https://share.google/Dt0GaSqsUY3ywAw4H">Apri mappe</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BOOKING -->
+    <section id="booking" class="section container">
+      <div class="section__head">
+        <h2 class="section__title">Prenota</h2>
+        <p class="section__sub">Scegli giorno e orario, lascia due info e ti richiamo</p>
+      </div>
+
+      <div class="grid">
+        <!-- CALENDARIO -->
+        <div class="card calendar">
+          <div class="cal__head">
+            <button class="icon" id="prevMonth" aria-label="Mese precedente">←</button>
+            <h3 id="monthLabel" class="cal__month">Mese Anno</h3>
+            <button class="icon" id="nextMonth" aria-label="Mese successivo">→</button>
+          </div>
+
+          <div class="cal__week" aria-hidden="true">
+            <span>L</span><span>M</span><span>M</span><span>G</span><span>V</span><span>S</span><span>D</span>
+          </div>
+          <div class="cal__days" id="days" role="grid" aria-label="Seleziona un giorno"></div>
+
+          <div class="slots">
+            <h4 class="slots__title">Orari</h4>
+            <div class="slotlist" id="slotList" role="listbox" aria-label="Orari"></div>
+          </div>
+        </div>
+
+        <!-- FORM -->
+        <form class="card form" id="bookingForm" novalidate>
+          <div class="field">
+            <label for="name">Nome</label>
+            <input id="name" name="name" required placeholder="Come ti chiami?" />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required placeholder="nome@email.com" />
+          </div>
+          <div class="field">
+            <label for="style">Stile</label>
+            <select id="style" name="style">
+              <option value="surrealista" selected>Surrealista</option>
+              <option value="blackwork">Blackwork</option>
+              <option value="fineline">Fine line</option>
+              <option value="realistico">Realistico</option>
+              <option value="altro">Altro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="notes">Note (opzionale)</label>
+            <textarea id="notes" name="notes" placeholder="Zona, dimensioni, riferimenti…"></textarea>
+          </div>
+
+          <div class="summary">
+            <div>Data: <strong id="summaryDate">—</strong></div>
+            <div>Ora: <strong id="summaryTime">—</strong></div>
+          </div>
+
+          <button class="btn btn--primary" type="submit">Manda richiesta</button>
+          <p class="tiny">Verrai ricontattato per un primo incontro conoscitivo.</p>
+          <output id="formMsg" class="form-msg" role="status"></output>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      © <span id="year"></span> Emanuele Amendolaggine — presso Nico Catucci TattooShop · <a href="#studio">Info</a>
+    </div>
+  </footer>
+
+  <!-- JS -->
+    <script type="module" src="../js/app.js?v=2"></script>
+</body>
+</html>
