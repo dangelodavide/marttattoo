@@ -50,6 +50,9 @@ img{ max-width:100%; display:block }
 .mobile-menu{ display:none; flex-direction:column; gap:12px; padding:0 4vw 12px }
 @media (max-width:760px){
   .nav__links{ display:none } .nav__burger{ display:block } .mobile-menu{ display:flex }
+  .site-header{
+    display: none;
+}
 }
 
 /* ========== SEZIONI ========== */
