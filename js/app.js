@@ -164,7 +164,6 @@ function closeLightbox() {
   }
 
   function applyTransform(previewPx = 0) {
-    // sposta di index * (100% / per) e applica l’eventuale anteprima in px durante il drag
     const pct = -(index * stepPercent());
     track.style.transform = `translateX(calc(${pct}% + ${previewPx}px))`;
   }
@@ -254,6 +253,9 @@ function closeLightbox() {
 
 /* ========== CALENDARIO + SLOTS (Supabase + fallback, cap=5) ========== */
 (function booking() {
+  const slotsTitle = $(".slots__title");
+// nascondi il titolo all'avvio
+if (slotsTitle) slotsTitle.hidden = true;
   const monthLabel   = $("#monthLabel");
   const daysGrid     = $("#days");
   const slotList     = $("#slotList");
@@ -275,8 +277,8 @@ function closeLightbox() {
   let selectedDate = null;
   let selectedTime = null;
 
-  const pad = (n) => String(n).padStart(2, "0");
-  const dateKey = (d) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const _pad = (n) => String(n).padStart(2, "0");
+  const dateKey = (d) => `${d.getFullYear()}-${_pad(d.getMonth()+1)}-${_pad(d.getDate())}`;
 
   // ===== Fallback locale (se Supabase non c'è) =====
   function lsGetCounts() {
@@ -295,7 +297,64 @@ function closeLightbox() {
     lsSetCounts(store);
   }
 
-  // ===== API astratte: contatore + insert =====
+  // ====== QUERY AIUTANTI (NUOVE) ======
+
+  // 1) Conteggi per tutti gli slot di un determinato giorno (una sola query)
+  // 1) Conteggi per tutti gli slot di un determinato giorno (senza .group())
+async function fetchDayCounts(dateObj) {
+  const day = dateKey(dateObj);
+
+  // fallback locale se supabase manca
+  if (!supabase) {
+    const out = {};
+    for (const s of defaultSlots) out[s] = lsCountFor(day, s);
+    return out;
+  }
+
+  // prendo SOLO la colonna slot per quel giorno e conto in JS
+  const { data, error } = await supabase
+    .from("appointments")
+    .select("slot")
+    .eq("date", day);
+
+  if (error) {
+    console.warn("[SB] fetchDayCounts error, fallback:", error);
+    const out = {};
+    for (const s of defaultSlots) out[s] = lsCountFor(day, s);
+    return out;
+  }
+
+  const counts = {};
+  for (const s of defaultSlots) counts[s] = 0;
+  for (const row of (data || [])) {
+    if (counts[row.slot] !== undefined) counts[row.slot] += 1;
+  }
+  return counts;
+}
+
+  // 2) Set dei giorni pieni (tutte le fasce complete) per il mese corrente
+  async function fetchMonthFullDays(viewDate) {
+    if (!supabase) return new Set();
+
+    const y = viewDate.getFullYear();
+    const m = viewDate.getMonth();
+    const first = new Date(y, m, 1);
+    const last  = new Date(y, m+1, 0);
+
+    const { data, error } = await supabase
+      .from("day_full")
+      .select("day, is_full")
+      .gte("day", dateKey(first))
+      .lte("day", dateKey(last));
+
+    if (error) {
+      console.warn("[SB] day_full error:", error);
+      return new Set();
+    }
+    return new Set((data || []).filter(r => r.is_full).map(r => r.day));
+  }
+
+  // ===== API astratte: contatore singolo + insert =====
   async function countSlot(dateObj, slotStr) {
     const day = dateKey(dateObj);
     if (supabase) {
@@ -311,20 +370,26 @@ function closeLightbox() {
     }
   }
 
-  async function createAppointment({ name, phone, dateObj, slotStr }) {
+  async function createAppointment({ name, phone, style, notes, dateObj, slotStr }) {
     const day = dateKey(dateObj);
 
-    // ricontrollo concorrenza
+    // ricontrollo concorrenza lato client (il server fa fede)
     const current = await countSlot(dateObj, slotStr);
     if (current >= MAX_PER_SLOT) return { ok:false, reason:"full" };
 
     if (supabase) {
       const { error } = await supabase.from("appointments").insert({
-        name, phone, date: day, slot: slotStr
+        name,
+        phone,
+        style: style || "surrealista",
+        notes: notes || null,
+        date: day,
+        slot: slotStr
       }).single();
+
       if (error) {
-        if (/full \(max 5\)/i.test(error.message)) return { ok:false, reason:"full" };    // trigger cap
-        if (error.code === "23505")                   return { ok:false, reason:"duplicate" }; // unique(phone)
+        if (/Slot pieno/i.test(error.message)) return { ok:false, reason:"full", error };
+        if (error.code === "23505")           return { ok:false, reason:"duplicate", error };
         console.error("[SB] insert error:", error);
         return { ok:false, reason:"error", error };
       }
@@ -338,7 +403,7 @@ function closeLightbox() {
   // ===== UI =====
   function capitalizeFirst(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
 
-  function renderMonth() {
+  async function renderMonth() {
     const y = view.getFullYear();
     const m = view.getMonth();
     monthLabel.textContent = capitalizeFirst(new Intl.DateTimeFormat("it-IT", {
@@ -349,6 +414,10 @@ function closeLightbox() {
     const first = new Date(y, m, 1);
     let start = (first.getDay() + 6) % 7; // lun=0
     const daysInMonth = new Date(y, m + 1, 0).getDate();
+    const today = new Date(); today.setHours(0,0,0,0);
+
+    // 🆕 giorni pieni da DB (una sola query per mese)
+    const fullDays = await fetchMonthFullDays(view);
 
     for (let i = 0; i < start; i++) {
       const d = document.createElement("div");
@@ -358,14 +427,18 @@ function closeLightbox() {
       daysGrid.appendChild(d);
     }
 
-    const today = new Date(); today.setHours(0,0,0,0);
-
     for (let d = 1; d <= daysInMonth; d++) {
       const date = new Date(y, m, d);
+      const key  = dateKey(date);
       const el = document.createElement("button");
       el.className = "day";
       el.textContent = d;
-      const disabled = date < today || date.getDay() === 0; // domenica chiuso
+
+      const disabled =
+        date < today ||            // passato
+        date.getDay() === 0 ||     // domenica chiuso
+        fullDays.has(key);         // tutte le fasce piene
+
       if (disabled) el.setAttribute("aria-disabled", "true");
       el.addEventListener("click", async () => {
         if (disabled) return;
@@ -378,35 +451,59 @@ function closeLightbox() {
     }
   }
 
-  async function renderSlots() {
-    slotList.innerHTML = "";
-    selectedTime = null;
+async function renderSlots() {
+  slotList.innerHTML = "";
+  selectedTime = null;
 
-    for (const t of defaultSlots) {
-      const b = document.createElement("button");
-      b.className = "chip";
-      b.textContent = t;
-
-      const c = await countSlot(selectedDate, t);
-      if (c >= MAX_PER_SLOT) {
-        b.setAttribute("aria-disabled", "true");
-        b.title = "Orario non disponibile";
-      }
-
-      b.addEventListener("click", async (e) => {
-        e.preventDefault();
-        if (b.hasAttribute("aria-disabled")) return;
-        $$(".chip", slotList).forEach((c) => c.removeAttribute("aria-selected"));
-        b.setAttribute("aria-selected", "true");
-        selectedTime = t;
-        updateSummary();
-      });
-
-      slotList.appendChild(b);
-    }
-
-    updateSummary();
+  let counts = {};
+  try {
+    counts = await fetchDayCounts(selectedDate);
+  } catch (e) {
+    console.warn("renderSlots fallback:", e);
+    counts = {};
+    for (const s of defaultSlots) counts[s] = lsCountFor(dateKey(selectedDate), s);
   }
+
+  let anyVisible = false;
+
+  for (const t of defaultSlots) {
+    const b = document.createElement("button");
+    b.className = "chip";
+
+    const used = counts[t] || 0;
+    const remaining = Math.max(0, MAX_PER_SLOT - used);
+    b.textContent = remaining > 0 ? `${t} — ${remaining} posti` : `${t} — pieno`;
+
+    if (remaining <= 0) {
+      b.setAttribute("aria-disabled", "true");
+      b.title = "Orario non disponibile";
+    } else {
+      anyVisible = true; // c'è almeno uno slot prenotabile
+    }
+    // mostra il titolo solo se esiste almeno uno slot prenotabile
+if (slotsTitle) slotsTitle.hidden = !anyVisible;
+
+
+    b.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (b.hasAttribute("aria-disabled")) return;
+      $$(".chip", slotList).forEach((c) => c.removeAttribute("aria-selected"));
+      b.setAttribute("aria-selected", "true");
+      selectedTime = t;
+      updateSummary();
+    });
+
+    slotList.appendChild(b);
+  }
+
+  // mostra il titolo SOLO se esiste almeno uno slot con posti
+  if (slotsTitle) {
+    slotsTitle.style.display = anyVisible ? "" : "none";
+  }
+
+  updateSummary();
+}
+
 
   function updateSummary() {
     summaryDate.textContent = selectedDate
@@ -430,8 +527,11 @@ function closeLightbox() {
     e.preventDefault();
     formMsg.textContent = "";
 
-    const name  = $("#name").value.trim();
-    const phone = $("#phone").value.trim();
+    const name   = $("#name").value.trim();
+    const phone  = $("#phone").value.trim();
+    const style  = $("#style")?.value || "surrealista";
+    const notes  = $("#notes")?.value?.trim() || "";
+
     const phoneInput = $("#phone");
     const phoneValid = phoneInput.checkValidity();
 
@@ -439,17 +539,25 @@ function closeLightbox() {
     if (!phoneValid)          { formMsg.textContent = "Numero non valido. Controlla il formato."; return; }
     if (!selectedDate || !selectedTime) { formMsg.textContent = "Scegli giorno e ora."; return; }
 
-    const res = await createAppointment({ name, phone, dateObj: selectedDate, slotStr: selectedTime });
+    const res = await createAppointment({
+      name, phone, style, notes,
+      dateObj: selectedDate,
+      slotStr: selectedTime
+    });
 
     if (!res.ok) {
-      if (res.reason === "full")      { formMsg.textContent = "💥 Peccato, qualcuno ti ha preceduto: orario appena esaurito."; await renderSlots(); return; }
+      if (res.reason === "full" || /Slot pieno/i.test(res.error?.message || "")) {
+        formMsg.textContent = "💥 Peccato, qualcuno ti ha preceduto: orario appena esaurito.";
+        await renderSlots();
+        return;
+      }
       if (res.reason === "duplicate") { formMsg.textContent = "Hai già inviato una richiesta per questo slot."; return; }
       formMsg.textContent = "Si è verificato un errore, riprova più tardi.";
       return;
     }
 
     const when = `${pad(selectedDate.getDate())}/${pad(selectedDate.getMonth()+1)}/${selectedDate.getFullYear()} ${selectedTime}`;
-    formMsg.textContent = `Richiesta inviata. Ti contatto per confermare ${when}.`;
+    formMsg.textContent = `Richiesta inviata! Ti contatto per confermare ${when}.`;
     form.reset();
     selectedTime = null;
     updateSummary();
@@ -462,11 +570,11 @@ function closeLightbox() {
 if (supabase) {
   console.info("[SB] Supabase client pronto:", supabase);
 
-  const pad = (n) => String(n).padStart(2, "0");
+  const _pad = (n) => String(n).padStart(2, "0");
   const todayKey = () => {
     const d = new Date();
-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-    };
+    return `${d.getFullYear()}-${_pad(d.getMonth()+1)}-${_pad(d.getDate())}`;
+  };
 
   async function sbPing() {
     console.log("[SB] ping…");
