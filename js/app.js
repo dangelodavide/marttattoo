@@ -10,8 +10,12 @@ try {
   console.info("Supabase non configurato. Portfolio statico ok.");
 }
 
+// === Portfolio via Supabase Storage ===
+const SB_PORTFOLIO_BUCKET = "martart-portfolio"; // nome bucket
+const SB_PORTFOLIO_PREFIX = "";                  // cartella entro il bucket ("" = root)
+
 /* ========== Helpers ========== */
-const $ = (s, p = document) => p.querySelector(s);
+const $  = (s, p = document) => p.querySelector(s);
 const $$ = (s, p = document) => [...p.querySelectorAll(s)];
 const pad = (n) => String(n).padStart(2, "0");
 
@@ -33,8 +37,13 @@ const pad = (n) => String(n).padStart(2, "0");
   );
 })();
 
-/* ========== MEDIA STATICI ========== */
-const mediaFiles = [
+/* ========== MEDIA (Supabase Storage con fallback statico) ========== */
+// le regex non vengono più usate per filtrare lo storage, restano utili per i fallback locali
+const IMAGE_EXT = /\.(jpe?g|png|gif|webp|avif|heic|heif)$/i;
+const VIDEO_EXT = /\.(mp4|webm|ogg|mov|m4v)$/i;
+
+// fallback locale (rimane se storage non disponibile/vuoto)
+const mediaFilesFallback = [
   "../media/1.jpg",
   "../media/2.jpg",
   "../media/3.jpg",
@@ -43,44 +52,89 @@ const mediaFiles = [
   "../media/6.jpg",
 ];
 
-const IMAGE_EXT = /\.(jpe?g|png|gif|webp|avif)$/i;
-const VIDEO_EXT = /\.(mp4|webm|ogg)$/i;
-
 function fileToNiceName(path) {
-  return path.split("/").pop().replace(/\.[^.]+$/, "").replace(/[-_]/g, " ");
+  const clean = path.split("?")[0];
+  return clean.split("/").pop().replace(/\.[^.]+$/, "").replace(/[-_]/g, " ");
 }
-function createSlideNode(file) {
+
+// Crea una slide: prova come immagine; se fallisce, sostituisce con <video>
+function createSlideNode(fileUrl) {
   const wrap = document.createElement("div");
   wrap.className = "slide";
   wrap.setAttribute("role", "group");
+  wrap.dataset.caption = fileToNiceName(fileUrl);
 
-  if (VIDEO_EXT.test(file)) {
+  const img = document.createElement("img");
+  img.src = fileUrl;
+  img.alt = fileToNiceName(fileUrl);
+  img.loading = "lazy";
+
+  img.addEventListener("error", () => {
+    wrap.innerHTML = "";
     const v = document.createElement("video");
-    v.src = file;
+    v.src = fileUrl;
     v.preload = "metadata";
     v.playsInline = true;
     v.muted = true;
+    v.setAttribute("muted", "");
     v.controls = true;
     wrap.appendChild(v);
-  } else if (IMAGE_EXT.test(file)) {
-    const img = document.createElement("img");
-    img.src = file;
-    img.alt = fileToNiceName(file);
-    img.loading = "lazy";
-    wrap.appendChild(img);
-  } else {
-    return null;
-  }
-  wrap.dataset.caption = fileToNiceName(file);
+  });
+
+  wrap.appendChild(img);
   return wrap;
 }
-function populateStaticCarousel(track) {
+
+// Prende TUTTI i file dal bucket (root o prefisso) e restituisce URL pronti
+async function fetchPortfolioFromSupabase() {
+  if (!supabase) return [];
+
+  const prefix = SB_PORTFOLIO_PREFIX; // "" = root
+  const { data, error } = await supabase.storage
+    .from(SB_PORTFOLIO_BUCKET)
+    .list(prefix, { limit: 200, sortBy: { column: "name", order: "asc" } });
+
+  if (error) {
+    console.warn("[SB] storage.list error:", error.message);
+    return [];
+  }
+
+  const paths = (data || [])
+    .filter((item) => !item.name.startsWith(".")) // es. .DS_Store
+    .map((item) => (prefix ? `${prefix}/${item.name}` : item.name));
+
+  if (paths.length === 0) return [];
+
+  // Prova URL firmati (funziona anche su bucket Public)
+  const { data: signed, error: signErr } = await supabase.storage
+    .from(SB_PORTFOLIO_BUCKET)
+    .createSignedUrls(paths, 60 * 60); // 1h
+
+  if (!signErr && signed) {
+    return signed.map((s) => s.signedUrl).filter(Boolean);
+  }
+
+  // Fallback: URL pubblici (solo se bucket è Public)
+  return paths
+    .map((p) => supabase.storage.from(SB_PORTFOLIO_BUCKET).getPublicUrl(p).data.publicUrl)
+    .filter(Boolean);
+}
+
+// Popola il carosello (Storage → fallback ai file locali)
+async function populateCarousel(track) {
   if (!track) return [];
   track.innerHTML = "";
-  const slides = mediaFiles
-    .filter((f) => IMAGE_EXT.test(f) || VIDEO_EXT.test(f))
-    .map(createSlideNode)
-    .filter(Boolean);
+
+  let sources = [];
+  try {
+    sources = await fetchPortfolioFromSupabase();
+  } catch (e) {
+    console.warn("[SB] portfolio fetch failed, using fallback:", e);
+  }
+  if (!sources || sources.length === 0) sources = mediaFilesFallback;
+
+  // niente filtro per estensione: lascia decidere a createSlideNode
+  const slides = (sources || []).map(createSlideNode).filter(Boolean);
   slides.forEach((s) => track.appendChild(s));
   return slides;
 }
@@ -96,9 +150,7 @@ function ensureLightbox() {
   lb.innerHTML = `<div class="lightbox__inner" role="dialog" aria-modal="true"></div>`;
   document.body.appendChild(lb);
 
-  // chiusura click fuori
   lb.addEventListener("click", (e) => { if (e.target === lb) closeLightbox(); });
-  // chiusura ESC
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeLightbox(); });
 
   return lb;
@@ -130,132 +182,84 @@ function closeLightbox() {
 }
 
 /* ========== CAROUSEL (1 card per volta) ========== */
-(function carousel() {
+(async function carousel() {
   const track   = $("#carouselTrack");
   const prev    = $("#prevBtn");
   const next    = $("#nextBtn");
-  const caption = $("#caption"); // lasciamo vuoto (niente testo a sx)
+  const caption = $("#caption");
   const count   = $("#count");
   if (!track) return;
 
-  // Popola PRIMA le slide
-  populateStaticCarousel(track);
+  // Storage (bucket) → fallback ai media locali
+  let slides = await populateCarousel(track);
 
-  let slides = $$(".slide", track);
-
-  // quante card visibili contemporaneamente (da CSS --per), ma lo step è sempre 1
   const getPer = () => {
     const v = getComputedStyle(track).getPropertyValue("--per").trim();
     const n = parseInt(v || "1", 10);
     return isNaN(n) || n < 1 ? 1 : n;
   };
 
-  let index = 0;     // indice della prima card visibile
+  let index = 0;
   let per   = getPer();
-
   const totalPositions = () => Math.max(1, slides.length - per + 1);
   const stepPercent = () => 100 / Math.max(1, per);
 
-  function clamp(i) {
-    const max = totalPositions() - 1;
-    if (i < 0) return max;           // wrap indietro
-    if (i > max) return 0;           // wrap avanti
-    return i;
-  }
+  function clamp(i){ const max = totalPositions() - 1; if(i<0) return max; if(i>max) return 0; return i; }
+  function applyTransform(px=0){ const pct = -(index * stepPercent()); track.style.transform = `translateX(calc(${pct}% + ${px}px))`; }
 
-  function applyTransform(previewPx = 0) {
-    const pct = -(index * stepPercent());
-    track.style.transform = `translateX(calc(${pct}% + ${previewPx}px))`;
-  }
-
-  function updateUI() {
+  function updateUI(){
     if (caption) caption.textContent = "";
     per = getPer();
-
-    // se lo schermo cambia e l'indice sfora, rientra nei limiti validi
     index = Math.min(index, totalPositions() - 1);
     applyTransform(0);
 
-    // contatore: es. 2–4 / 12
     const start = index + 1;
     const end   = Math.min(index + per, slides.length);
     if (count) count.textContent = `${start}–${end} / ${slides.length}`;
 
-    // play/pause video solo per le card in vista
     slides.forEach((s, idx) => {
       const v = s.querySelector("video");
       if (!v) return;
       const inView = idx >= index && idx < index + per;
-      if (inView) { v.muted = true; v.loop = true; v.play().catch(()=>{}); }
+      if (inView) { v.muted = true; v.autoplay = true; v.loop = true; v.play().catch(()=>{}); }
       else { v.pause(); v.currentTime = 0; }
     });
   }
 
-  function go(to) {
-    index = clamp(to);
-    updateUI();
-  }
+  function go(to){ index = clamp(to); updateUI(); }
 
   prev?.addEventListener("click", () => go(index - 1));
   next?.addEventListener("click", () => go(index + 1));
 
-  // click -> lightbox
   track.addEventListener("click", (e) => {
     const media = e.target.closest(".slide img, .slide video");
     if (!media) return;
     openLightbox(media);
   });
 
-  // swipe 1-per-volta con anteprima
-  let x0 = null, dragging = false, pointerId = null;
-  track.addEventListener("pointerdown", (e) => {
-    x0 = e.clientX; dragging = true; pointerId = e.pointerId;
-    track.setPointerCapture(pointerId);
-  });
-  track.addEventListener("pointermove", (e) => {
-    if (!dragging) return;
-    const dx = e.clientX - x0;
-    applyTransform(dx);
-  });
-  track.addEventListener("pointerup", (e) => {
-    if (!dragging) return;
-    const dx = e.clientX - x0;
-    const threshold = track.clientWidth / 6; // sensibilità swipe
-    if (dx >  threshold) go(index - 1);
-    else if (dx < -threshold) go(index + 1);
-    else applyTransform(0); // torna in sede
-    dragging = false; x0 = null; pointerId = null;
-  });
-  track.addEventListener("pointercancel", () => { dragging = false; x0 = null; pointerId = null; applyTransform(0); });
+  let x0=null, dragging=false, pid=null;
+  track.addEventListener("pointerdown",(e)=>{ x0=e.clientX; dragging=true; pid=e.pointerId; track.setPointerCapture(pid); });
+  track.addEventListener("pointermove",(e)=>{ if(!dragging) return; applyTransform(e.clientX - x0); });
+  track.addEventListener("pointerup",(e)=>{ if(!dragging) return; const dx=e.clientX-x0; const thr=track.clientWidth/6; if(dx>thr) go(index-1); else if(dx<-thr) go(index+1); else applyTransform(0); dragging=false; x0=null; pid=null; });
+  track.addEventListener("pointercancel",()=>{ dragging=false; x0=null; pid=null; applyTransform(0); });
 
-  // tastiera
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowLeft")  go(index - 1);
-    if (e.key === "ArrowRight") go(index + 1);
-  });
-
-  // responsive
-  let rAF = null;
+  let rAF=null;
   window.addEventListener("resize", () => {
     cancelAnimationFrame(rAF);
-    rAF = requestAnimationFrame(() => {
-      slides = $$(".slide", track);
-      updateUI();
-    });
+    rAF = requestAnimationFrame(() => { slides = $$(".slide", track); updateUI(); });
   });
 
   updateUI();
 
-  // util per debug
-  window.__goIndex = go;
-  window.__refreshCarousel = () => { slides = $$(".slide", track); updateUI(); };
+  // debug helper
+  window.__refreshCarousel = async () => { slides = await populateCarousel(track); updateUI(); };
 })();
 
 /* ========== CALENDARIO + SLOTS (Supabase + fallback, cap=5) ========== */
 (function booking() {
-  const slotsTitle = $(".slots__title");
-// nascondi il titolo all'avvio
-if (slotsTitle) slotsTitle.hidden = true;
+  const slotsTitle   = $(".slots__title");
+  if (slotsTitle) slotsTitle.hidden = true; // nascosto all’avvio
+
   const monthLabel   = $("#monthLabel");
   const daysGrid     = $("#days");
   const slotList     = $("#slotList");
@@ -297,42 +301,36 @@ if (slotsTitle) slotsTitle.hidden = true;
     lsSetCounts(store);
   }
 
-  // ====== QUERY AIUTANTI (NUOVE) ======
+  // ====== QUERY AIUTANTI ======
+  async function fetchDayCounts(dateObj) {
+    const day = dateKey(dateObj);
 
-  // 1) Conteggi per tutti gli slot di un determinato giorno (una sola query)
-  // 1) Conteggi per tutti gli slot di un determinato giorno (senza .group())
-async function fetchDayCounts(dateObj) {
-  const day = dateKey(dateObj);
+    if (!supabase) {
+      const out = {};
+      for (const s of defaultSlots) out[s] = lsCountFor(day, s);
+      return out;
+    }
 
-  // fallback locale se supabase manca
-  if (!supabase) {
-    const out = {};
-    for (const s of defaultSlots) out[s] = lsCountFor(day, s);
-    return out;
+    const { data, error } = await supabase
+      .from("appointments")
+      .select("slot")
+      .eq("date", day);
+
+    if (error) {
+      console.warn("[SB] fetchDayCounts error, fallback:", error);
+      const out = {};
+      for (const s of defaultSlots) out[s] = lsCountFor(day, s);
+      return out;
+    }
+
+    const counts = {};
+    for (const s of defaultSlots) counts[s] = 0;
+    for (const row of (data || [])) {
+      if (counts[row.slot] !== undefined) counts[row.slot] += 1;
+    }
+    return counts;
   }
 
-  // prendo SOLO la colonna slot per quel giorno e conto in JS
-  const { data, error } = await supabase
-    .from("appointments")
-    .select("slot")
-    .eq("date", day);
-
-  if (error) {
-    console.warn("[SB] fetchDayCounts error, fallback:", error);
-    const out = {};
-    for (const s of defaultSlots) out[s] = lsCountFor(day, s);
-    return out;
-  }
-
-  const counts = {};
-  for (const s of defaultSlots) counts[s] = 0;
-  for (const row of (data || [])) {
-    if (counts[row.slot] !== undefined) counts[row.slot] += 1;
-  }
-  return counts;
-}
-
-  // 2) Set dei giorni pieni (tutte le fasce complete) per il mese corrente
   async function fetchMonthFullDays(viewDate) {
     if (!supabase) return new Set();
 
@@ -354,7 +352,7 @@ async function fetchDayCounts(dateObj) {
     return new Set((data || []).filter(r => r.is_full).map(r => r.day));
   }
 
-  // ===== API astratte: contatore singolo + insert =====
+  // ===== API astratte: contatore + insert =====
   async function countSlot(dateObj, slotStr) {
     const day = dateKey(dateObj);
     if (supabase) {
@@ -373,7 +371,6 @@ async function fetchDayCounts(dateObj) {
   async function createAppointment({ name, phone, style, notes, dateObj, slotStr }) {
     const day = dateKey(dateObj);
 
-    // ricontrollo concorrenza lato client (il server fa fede)
     const current = await countSlot(dateObj, slotStr);
     if (current >= MAX_PER_SLOT) return { ok:false, reason:"full" };
 
@@ -416,7 +413,6 @@ async function fetchDayCounts(dateObj) {
     const daysInMonth = new Date(y, m + 1, 0).getDate();
     const today = new Date(); today.setHours(0,0,0,0);
 
-    // 🆕 giorni pieni da DB (una sola query per mese)
     const fullDays = await fetchMonthFullDays(view);
 
     for (let i = 0; i < start; i++) {
@@ -445,65 +441,61 @@ async function fetchDayCounts(dateObj) {
         selectedDate = date;
         $$(".day", daysGrid).forEach((b) => b.removeAttribute("aria-selected"));
         el.setAttribute("aria-selected", "true");
-        await renderSlots(); // async
+        await renderSlots();
       });
       daysGrid.appendChild(el);
     }
   }
 
-async function renderSlots() {
-  slotList.innerHTML = "";
-  selectedTime = null;
+  async function renderSlots() {
+    slotList.innerHTML = "";
+    selectedTime = null;
 
-  let counts = {};
-  try {
-    counts = await fetchDayCounts(selectedDate);
-  } catch (e) {
-    console.warn("renderSlots fallback:", e);
-    counts = {};
-    for (const s of defaultSlots) counts[s] = lsCountFor(dateKey(selectedDate), s);
-  }
-
-  let anyVisible = false;
-
-  for (const t of defaultSlots) {
-    const b = document.createElement("button");
-    b.className = "chip";
-
-    const used = counts[t] || 0;
-    const remaining = Math.max(0, MAX_PER_SLOT - used);
-    b.textContent = remaining > 0 ? `${t} — ${remaining} posti` : `${t} — pieno`;
-
-    if (remaining <= 0) {
-      b.setAttribute("aria-disabled", "true");
-      b.title = "Orario non disponibile";
-    } else {
-      anyVisible = true; // c'è almeno uno slot prenotabile
+    let counts = {};
+    try {
+      counts = await fetchDayCounts(selectedDate);
+    } catch (e) {
+      console.warn("renderSlots fallback:", e);
+      counts = {};
+      for (const s of defaultSlots) counts[s] = lsCountFor(dateKey(selectedDate), s);
     }
-    // mostra il titolo solo se esiste almeno uno slot prenotabile
-if (slotsTitle) slotsTitle.hidden = !anyVisible;
 
+    let anyVisible = false;
 
-    b.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (b.hasAttribute("aria-disabled")) return;
-      $$(".chip", slotList).forEach((c) => c.removeAttribute("aria-selected"));
-      b.setAttribute("aria-selected", "true");
-      selectedTime = t;
-      updateSummary();
-    });
+    for (const t of defaultSlots) {
+      const b = document.createElement("button");
+      b.className = "chip";
 
-    slotList.appendChild(b);
+      const used = counts[t] || 0;
+      const remaining = Math.max(0, MAX_PER_SLOT - used);
+      b.textContent = remaining > 0 ? `${t} — ${remaining} posti` : `${t} — pieno`;
+
+      if (remaining <= 0) {
+        b.setAttribute("aria-disabled", "true");
+        b.title = "Orario non disponibile";
+      } else {
+        anyVisible = true;
+      }
+
+      b.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (b.hasAttribute("aria-disabled")) return;
+        $$(".chip", slotList).forEach((c) => c.removeAttribute("aria-selected"));
+        b.setAttribute("aria-selected", "true");
+        selectedTime = t;
+        updateSummary();
+      });
+
+      slotList.appendChild(b);
+    }
+
+    // mostra il titolo SOLO se esiste almeno uno slot con posti
+    if (slotsTitle) {
+      slotsTitle.hidden = !anyVisible;
+    }
+
+    updateSummary();
   }
-
-  // mostra il titolo SOLO se esiste almeno uno slot con posti
-  if (slotsTitle) {
-    slotsTitle.style.display = anyVisible ? "" : "none";
-  }
-
-  updateSummary();
-}
-
 
   function updateSummary() {
     summaryDate.textContent = selectedDate
@@ -562,7 +554,7 @@ if (slotsTitle) slotsTitle.hidden = !anyVisible;
     selectedTime = null;
     updateSummary();
     $$(".chip", slotList).forEach((c) => c.removeAttribute("aria-selected"));
-    await renderSlots(); // aggiorna disponibilità
+    await renderSlots();
   });
 })();
 
