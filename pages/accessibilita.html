@@ -4,8 +4,19 @@
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Dichiarazione di accessibilità — Mart Tattoo</title>
   <meta name="description" content="Impegno, caratteristiche e stato di conformità in materia di accessibilità.">
-    <!-- Base dinamico -->
-  <script src="js/basepath.js"></script>
+  <script>
+(function () {
+  var path = location.pathname;
+
+  var repoMatch = path.match(/^\/([^\/]+)\/(?:html|pages)\//);
+  var baseHref = repoMatch ? ("/" + repoMatch[1] + "/")
+                           : (/^\/(?:html|pages)\//.test(path) ? "/" : "/");
+
+  var base = document.createElement("base");
+  base.href = baseHref;
+  document.head.prepend(base);
+})();
+</script>
   <link rel="stylesheet" href="../css/style.css"/>
   <link rel="stylesheet" href="../css/accessibilita.css"/>
 </head>

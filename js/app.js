@@ -560,7 +560,6 @@ function closeLightbox() {
 
 // ==== TEST CONSOLE SUPABASE (dev helpers) ====
 if (supabase) {
-  console.info("[SB] Supabase client pronto:", supabase);
 
   const _pad = (n) => String(n).padStart(2, "0");
   const todayKey = () => {
@@ -636,5 +635,4 @@ if (supabase) {
   }
 
   window.__sb = { ping: sbPing, count: sbCount, insert: sbInsert, fillTo5: sbFillTo5, list: sbListRecent, reset: sbReset };
-  console.log("%cSupabase test pronti:", "background:#333;color:#fff;padding:2px 6px;border-radius:4px", Object.keys(window.__sb));
 }
