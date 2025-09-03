@@ -1,0 +1,67 @@
+/* =========================================================
+   AFTERCARE — Estensioni fedeli al CSS primario
+   (nessun override globale, solo classi additive)
+   ========================================================= */
+
+/* Card con padding coerente al resto del sito */
+.card--pad{ padding:16px; border-radius:var(--radius); }
+@media (min-width:700px){ .card--pad{ padding:22px; } }
+
+/* Hero compatto come nelle altre pagine informative */
+.hero--compact{ padding:56px 0 28px; }
+@media (max-width:760px){ .hero--compact{ padding:40px 0 20px; } }
+
+/* Griglia dei blocchi aftercare (mobile 1 col, desktop 3→2 a scelta) */
+.ac-grid{
+  display:grid; gap:22px;
+}
+@media (min-width:900px){
+  .ac-grid{ grid-template-columns:repeat(3, 1fr); }
+}
+
+/* Liste coerenti con il tema */
+.checklist, .dontlist, .watchlist{
+  margin:0; padding-left:0; list-style:none;
+  display:grid; gap:8px;
+}
+.checklist li,
+.dontlist li,
+.watchlist li{
+  background:#101010;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px 12px;
+  position:relative;
+}
+
+/* Marker a sinistra con l'accent: semplice, leggibile */
+.checklist li::before,
+.dontlist li::before,
+.watchlist li::before{
+  content:"";
+  position:absolute; left:0; top:0; bottom:0;
+  width:4px; border-radius:12px 0 0 12px;
+  background:var(--accent);
+}
+
+/* Callout e note */
+.ac-tip{
+  border:1px solid var(--border);
+  background:#101010;
+}
+.ac-callout{
+  border:1px solid var(--border);
+  background:#101010;
+}
+
+/* CTA in chiusura */
+.cta__row{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px; flex-wrap:wrap;
+}
+.cta__actions{ display:flex; gap:10px; flex-wrap:wrap; }
+
+/* Accessibilità: riduzione motion */
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; }
+}

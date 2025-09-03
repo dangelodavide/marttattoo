@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dichiarazione di accessibilità — Mart Tattoo</title>
+  <meta name="description" content="Impegno, caratteristiche e stato di conformità in materia di accessibilità.">
+  <link rel="stylesheet" href="../css/style.css"/>
+  <link rel="stylesheet" href="../css/accessibilita.css"/>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="../html/index.html#top" aria-label="Home">
+        <img src="../media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Logo Emanuele Amendolaggine" class="brand__logo" />
+        <span class="brand__name">Mart Tattoo</span>
+      </a>
+      <nav class="nav__links" aria-label="Navigazione principale">
+        <a href="../html/index.html#portfolio" class="nav__link">Portfolio</a>
+        <a href="../html/index.html#studio" class="nav__link">Studio</a>
+        <a href="../html/index.html#booking" class="btn btn--primary">Prenota</a>
+      </nav>
+      <button class="nav__burger" aria-label="Apri menù" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" hidden>
+      <a href="../html/index.html#portfolio" class="nav__link">Portfolio</a>
+      <a href="../html/index.html#studio" class="nav__link">Studio</a>
+      <a href="../html/index.html#booking" class="btn btn--primary w-full">Prenota</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero hero--compact container">
+      <div class="hero__logo">
+        <img src="../media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Monogramma EA" />
+      </div>
+      <h1 class="hero__title">Accessibilità</h1>
+      <p class="hero__tag">Il sito è progettato per essere fruibile dal maggior numero di persone possibile.</p>
+      <div class="hero__cta">
+        <a class="btn" href="../pages/gestisci-dati.html">Gestisci i tuoi dati</a>
+        <a class="btn btn--ghost" href="../pages/privacy.html">Privacy</a>
+      </div>
+    </section>
+
+    <!-- INDICE RAPIDO -->
+    <section class="section container">
+      <nav class="card card--pad pillnav" aria-label="Indice rapido">
+        <a class="pill" href="#impegno">Impegno</a>
+        <a class="pill" href="#stato">Stato di conformità</a>
+        <a class="pill" href="#caratteristiche">Caratteristiche di accessibilità</a>
+        <a class="pill" href="#compatibilita">Compatibilità & tecnologia</a>
+        <a class="pill" href="#limitazioni">Limitazioni note</a>
+        <a class="pill" href="#scorciatoie">Scorciatoie da tastiera</a>
+        <a class="pill" href="#feedback">Feedback & contatti</a>
+        <span class="pill pill--muted" aria-hidden="true">Aggiornata: <span id="a11yDate">—</span></span>
+      </nav>
+    </section>
+
+    <!-- CONTENUTI -->
+    <section class="section container">
+      <div class="a11y-grid">
+        <article class="card card--pad" id="impegno">
+          <h3>Impegno</h3>
+          <p>Puntiamo alla conformità con le <b>WCAG 2.1 livello AA</b>. Lavoriamo per migliorare continuamente contenuti, struttura e interazione.</p>
+        </article>
+
+        <article class="card card--pad" id="stato">
+          <h3>Stato di conformità</h3>
+          <p><b>Parzialmente conforme</b> alle WCAG 2.1 AA: il sito rispetta molte linee guida, ma alcune aree potrebbero non essere ancora pienamente conformi.</p>
+          <p class="tiny">Esempi di aree in miglioramento: descrizioni più ricche per alcune immagini del portfolio, testi di link più specifici in contesti ripetuti.</p>
+        </article>
+
+        <article class="card card--pad" id="caratteristiche">
+          <h3>Caratteristiche di accessibilità</h3>
+          <ul class="bullets checklist">
+            <li><b>Contrasto</b> e tipografia leggibile, dimensioni responsive.</li>
+            <li><b>Navigazione da tastiera</b> con stati di <b>focus</b> visibili.</li>
+            <li><b>Struttura semantica</b> con heading gerarchici e landmark (header, main, footer, nav).</li>
+            <li><b>Immagini</b> con <code>alt</code> descrittivi dove necessario; media non decorativi evitano testo in immagine.</li>
+            <li><b>Motion</b>: rispetto di <code>prefers-reduced-motion</code> per ridurre animazioni.</li>
+            <li><b>Form</b> con etichette, suggerimenti e messaggi di stato.</li>
+            <li><b>Lingua</b> impostata (<code>lang="it"</code>), titoli di pagina coerenti e descrizioni meta.</li>
+          </ul>
+        </article>
+
+        <article class="card card--pad" id="compatibilita">
+          <h3>Compatibilità & tecnologia</h3>
+          <p>Il sito è progettato per funzionare con gli ultimi browser moderni (Chrome, Safari, Firefox, Edge) su desktop e mobile, con CSS moderni e senza dipendere da tecnologie proprietarie.</p>
+          <p class="tiny">Funziona anche con JavaScript disabilitato per i contenuti testuali principali; alcune funzioni (es. galleria, calendario) richiedono JS.</p>
+        </article>
+
+        <article class="card card--pad" id="limitazioni">
+          <h3>Limitazioni note</h3>
+          <ul class="bullets">
+            <li>Nel <b>carousel</b> il trascinamento con puntatore è affiancato da controlli e tasti freccia; stiamo introducendo ruoli ARIA avanzati per migliorare l’annuncio.</li>
+            <li>Contenuti <b>di terze parti</b> (es. mappe esterne) potrebbero non rispettare interamente le WCAG.</li>
+            <li>Alcune <b>anteprime media</b> potrebbero non avere descrizioni estese se il contenuto è puramente estetico.</li>
+          </ul>
+        </article>
+
+        <article class="card card--pad" id="scorciatoie">
+          <h3>Scorciatoie da tastiera</h3>
+          <ul class="bullets kbdlist">
+            <li><kbd>Freccia ←</kbd> / <kbd>→</kbd>: scorrimento nel portfolio.</li>
+            <li><kbd>Esc</kbd>: chiusura della lightbox immagini/video.</li>
+            <li><kbd>Tab</kbd>: navigazione attraverso link, bottoni e campi form.</li>
+            <li><kbd>Invio</kbd>: attiva il controllo in focus (es. giorno del calendario, bottone).</li>
+          </ul>
+        </article>
+
+        <article class="card card--pad" id="feedback">
+          <h3>Feedback & contatti</h3>
+          <p>Se trovi problemi di accessibilità o hai suggerimenti, scrivi a <a href="mailto:info@marttattoo.it">info@marttattoo.it</a> o chiama <a href="tel:+393347363499">+39 334 736 3499</a>. Cerchiamo di rispondere entro <b>30 giorni</b>.</p>
+          <p class="tiny">Indica, se puoi, pagina, dispositivo, browser e tecnologia assistiva usata.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container grid--footer">
+      <nav aria-label="Link utili">
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="/html/index.html#portfolio">Portfolio</a></li>
+          <li><a href="/html/index.html#studio">Dove siamo</a></li>
+          <li><a href="/html/index.html#booking">Prenota</a></li>
+          <li><a href="/pages/come-funziona.html">Come funziona la prenotazione</a></li>
+          <li><a href="/pages/faq.html">FAQ</a></li>
+          <li><a href="/pages/aftercare.html">Aftercare</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Legale">
+        <h4>Info & Policy</h4>
+        <ul>
+          <li><a href="/pages/policy-prenotazioni.html">Policy prenotazioni</a></li>
+          <li><a href="/pages/privacy.html">Privacy</a></li>
+          <li><a href="/pages/cookie.html">Cookie</a></li>
+          <li><a href="/pages/gestisci-dati.html">Gestisci Cookie</a></li>
+          <li><a href="/pages/termini.html">Termini e condizioni</a></li>
+          <li><a href="/pages/accessibilita.html" aria-current="page">Accessibilità</a></li>
+        </ul>
+      </nav>
+
+      <div class="contacts" aria-label="Contatti">
+        <h4>Contatti</h4>
+        <p><a href="tel:+393347363499">+39 334 736 3499</a></p>
+        <p><a href="mailto:info@marttattoo.it">info@marttattoo.it</a></p>
+        <p>Via Raffaele Comes 19, 70032 Bitonto (BA)</p>
+        <p>Partita IVA: 01234567890</p>
+        <p><a href="https://www.instagram.com/marttattooo/" target="_blank" rel="noopener">Instagram</a></p>
+      </div>
+    </div>
+
+    <div class="container copy tiny">
+      © <span id="year"></span> Emanuele Amendolaggine — Mart Tattoo — Realizzato da Davide D'Angelo
+    </div>
+  </footer>
+
+  <!-- JS -->
+  <script type="module" src="../js/app.js?v=2"></script>
+  <script>
+    // Data "Aggiornata"
+    document.getElementById('a11yDate')?.replaceChildren(
+      new Date().toLocaleDateString('it-IT', { day:'2-digit', month:'2-digit', year:'numeric' })
+    );
+  </script>
+</body>
+</html>

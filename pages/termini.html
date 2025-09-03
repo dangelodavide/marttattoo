@@ -5,65 +5,178 @@
   <title>Termini e condizioni — Mart Tattoo</title>
   <meta name="description" content="Condizioni di utilizzo del sito e del servizio.">
   <link rel="stylesheet" href="../css/style.css"/>
+  <link rel="stylesheet" href="../css/termini.css"/>
 </head>
 <body>
-  <header class="site-header">…</header>
-  <main class="section container">
-    <div class="section__head"><h1 class="section__title">Termini e condizioni</h1><p class="section__sub">Uso del sito e prenotazioni</p></div>
-    <article class="card" style="padding:20px">
-      <h3>Uso del sito</h3>
-      <p>Contenuti protetti da copyright. È vietato copiare senza autorizzazione.</p>
-
-      <h3>Servizi</h3>
-      <p>Le prenotazioni avvengono tramite form; la conferma è subordinata a valutazione e deposito.</p>
-
-      <h3>Responsabilità</h3>
-      <p>Le informazioni sul sito sono fornite “così come sono”. Possibili modifiche senza preavviso.</p>
-
-      <h3>Legge applicabile</h3>
-      <p>Foro competente: Italia.</p>
-    </article>
-  </main>
-<footer class="site-footer">
-  <div class="container grid--footer">
-    <nav aria-label="Link utili">
-      <h4>Studio</h4>
-      <ul>
-        <li><a href="/html/index.html#portfolio">Portfolio</a></li>
-        <li><a href="/html/index.html#studio">Dove siamo</a></li>
-        <li><a href="/html/index.html#booking">Prenota</a></li>
-        <li><a href="/pages/come-funziona.html">Come funziona la prenotazione</a></li>
-        <li><a href="/pages/faq.html">FAQ</a></li>
-        <li><a href="/pages/aftercare.html">Aftercare</a></li>
-      </ul>
-    </nav>
-
-    <nav aria-label="Legale">
-      <h4>Info & Policy</h4>
-      <ul>
-        <li><a href="/pages/policy-prenotazioni.html">Policy prenotazioni</a></li>
-        <li><a href="/pages/privacy.html">Privacy</a></li>
-        <li><a href="/pages/cookie.html">Cookie</a></li>
-        <li><button type="button" class="link" id="cookiePrefs">Gestisci cookie</button></li>
-        <li><a href="/pages/termini.html">Termini e condizioni</a></li>
-        <li><a href="/pages/accessibilita.html">Accessibilità</a></li>
-      </ul>
-    </nav>
-
-    <div class="contacts" aria-label="Contatti">
-      <h4>Contatti</h4>
-      <p><a href="tel:+393392012755">+39 339 201 2755</a></p>
-      <p><a href="mailto:info@marttattoo.it">info@marttattoo.it</a></p>
-      <p>Via Raffaele Comes 19, 70032 Bitonto (BA)</p>
-      <p>Partita IVA: 01234567890</p>
-      <p><a href="https://instagram.com/tuoaccount" target="_blank" rel="noopener">Instagram</a></p>
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="../html/index.html#top" aria-label="Home">
+        <img src="../media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Logo Emanuele Amendolaggine" class="brand__logo" />
+        <span class="brand__name">Mart Tattoo</span>
+      </a>
+      <nav class="nav__links" aria-label="Navigazione principale">
+        <a href="../html/index.html#portfolio" class="nav__link">Portfolio</a>
+        <a href="../html/index.html#studio" class="nav__link">Studio</a>
+        <a href="../html/index.html#booking" class="btn btn--primary">Prenota</a>
+      </nav>
+      <button class="nav__burger" aria-label="Apri menù" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
     </div>
-  </div>
+    <div class="mobile-menu" hidden>
+      <a href="../html/index.html#portfolio" class="nav__link">Portfolio</a>
+      <a href="../html/index.html#studio" class="nav__link">Studio</a>
+      <a href="../html/index.html#booking" class="btn btn--primary w-full">Prenota</a>
+    </div>
+  </header>
 
-  <div class="container copy tiny">
-    © <span id="year"></span> Emanuele Amendolaggine — Mart Tattoo
-  </div>
-</footer>
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero hero--compact container">
+      <div class="hero__logo">
+        <img src="../media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Monogramma EA" />
+      </div>
+      <h1 class="hero__title">Termini e condizioni</h1>
+      <p class="hero__tag">Uso del sito, prenotazioni e regole di studio.</p>
+      <div class="hero__cta">
+        <a class="btn btn--ghost" href="../pages/policy-prenotazioni.html">Policy prenotazioni</a>
+        <a class="btn" href="../pages/privacy.html">Privacy</a>
+      </div>
+    </section>
+
+    <!-- INDICE RAPIDO -->
+    <section class="section container">
+      <nav class="card card--pad pillnav" aria-label="Indice rapido">
+        <a class="pill" href="#uso-sito">Uso del sito</a>
+        <a class="pill" href="#prenotazioni">Prenotazioni</a>
+        <a class="pill" href="#prezzi">Preventivi & prezzi</a>
+        <a class="pill" href="#cancellazioni">Modifiche & cancellazioni</a>
+        <a class="pill" href="#responsabilita">Responsabilità</a>
+        <a class="pill" href="#proprieta">Proprietà intellettuale</a>
+        <a class="pill" href="#idoneita">Idoneità & salute</a>
+        <a class="pill" href="#pagamenti">Pagamenti</a>
+        <a class="pill" href="#legge">Legge applicabile</a>
+        <a class="pill" href="#contatti">Contatti</a>
+        <span class="pill pill--muted" aria-hidden="true">Aggiornati: <span id="tcDate">—</span></span>
+      </nav>
+    </section>
+
+    <!-- CONTENUTI -->
+    <section class="section container">
+      <div class="legal-grid">
+        <article class="card card--pad" id="uso-sito">
+          <h3>Uso del sito</h3>
+          <p>Il sito è fornito “così com’è”. Manteniamo i contenuti aggiornati con cura, ma potrebbero esserci errori o refusi. Possiamo modificare o rimuovere contenuti senza preavviso.</p>
+          <ul class="bullets">
+            <li>È vietato l’uso del sito per scopi illeciti o dannosi.</li>
+            <li>Il download di materiali è a tuo rischio e pericolo.</li>
+          </ul>
+        </article>
+
+        <article class="card card--pad" id="prenotazioni">
+          <h3>Prenotazioni</h3>
+          <p>Le richieste avvengono dal form online; la prenotazione è <b>confermata</b> solo dopo il contatto e, se richiesto, il <b>deposito</b>. Gli slot possono chiudersi al raggiungimento della capienza.</p>
+          <p class="tiny">Dettagli operativi in <a href="../pages/policy-prenotazioni.html">Policy prenotazioni</a>.</p>
+        </article>
+
+        <article class="card card--pad" id="prezzi">
+          <h3>Preventivi & prezzi</h3>
+          <p>I prezzi dipendono da dimensioni, complessità, posizione e numero di sessioni. Il preventivo è indicativo finché non sono definiti tutti i dettagli tecnici e igienico-sanitari.</p>
+        </article>
+
+        <article class="card card--pad" id="cancellazioni">
+          <h3>Modifiche, ritardi & cancellazioni</h3>
+          <ul class="bullets">
+            <li>Puoi spostare l’appuntamento entro i termini indicati (in genere 24–48 h).</li>
+            <li>Ritardi oltre 15 minuti potrebbero richiedere il rinvio.</li>
+            <li>No-show o cancellazioni tardive: il deposito può essere trattenuto.</li>
+          </ul>
+          <p class="tiny">Vedi <a href="../pages/policy-prenotazioni.html">Policy prenotazioni</a> per i casi specifici.</p>
+        </article>
+
+        <article class="card card--pad" id="responsabilita">
+          <h3>Limitazione di responsabilità</h3>
+          <p>Non siamo responsabili per interruzioni di servizio, malfunzionamenti tecnici o danni indiretti derivanti dall’uso del sito. L’uso dei contenuti è a tua discrezione.</p>
+        </article>
+
+        <article class="card card--pad" id="proprieta">
+          <h3>Proprietà intellettuale</h3>
+          <p>Testi, immagini e marchi presenti sul sito sono protetti. È vietata la riproduzione anche parziale senza autorizzazione scritta.</p>
+        </article>
+
+        <article class="card card--pad" id="idoneita">
+          <h3>Idoneità & salute</h3>
+          <p>Ci riserviamo di rifiutare lavori non idonei o in condizioni non sicure (es. reazioni cutanee, farmaci anticoagulanti, gravidanza). È vietato tatuare i minorenni dove previsto dalla legge.</p>
+        </article>
+
+        <article class="card card--pad" id="pagamenti">
+          <h3>Pagamenti</h3>
+          <p>Accettiamo contanti/carte secondo disponibilità. Eventuali acconti bloccano la data e sono scalati dal totale. Le condizioni sono confermate al momento del contatto.</p>
+        </article>
+
+        <article class="card card--pad" id="legge">
+          <h3>Legge applicabile & foro</h3>
+          <p>Questi termini sono regolati dalla legge italiana. Salvo diversa previsione inderogabile, il foro competente è quello del luogo in cui ha sede lo studio.</p>
+        </article>
+
+        <article class="card card--pad" id="contatti">
+          <h3>Contatti</h3>
+          <p>Per domande su termini e condizioni, scrivi a <a href="mailto:info@marttattoo.it">info@marttattoo.it</a> o chiama <a href="tel:+393347363499">+39 334 736 3499</a>.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container grid--footer">
+      <nav aria-label="Link utili">
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="/html/index.html#portfolio">Portfolio</a></li>
+          <li><a href="/html/index.html#studio">Dove siamo</a></li>
+          <li><a href="/html/index.html#booking">Prenota</a></li>
+          <li><a href="/pages/come-funziona.html">Come funziona la prenotazione</a></li>
+          <li><a href="/pages/faq.html">FAQ</a></li>
+          <li><a href="/pages/aftercare.html">Aftercare</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Legale">
+        <h4>Info & Policy</h4>
+        <ul>
+          <li><a href="/pages/policy-prenotazioni.html">Policy prenotazioni</a></li>
+          <li><a href="/pages/privacy.html">Privacy</a></li>
+          <li><a href="/pages/cookie.html">Cookie</a></li>
+          <li><a href="/pages/gestisci-dati.html">Gestisci Cookie</a></li>
+          <li><a href="/pages/termini.html" aria-current="page">Termini e condizioni</a></li>
+          <li><a href="/pages/accessibilita.html">Accessibilità</a></li>
+        </ul>
+      </nav>
+
+      <div class="contacts" aria-label="Contatti">
+        <h4>Contatti</h4>
+        <p><a href="tel:+393347363499">+39 334 736 3499</a></p>
+        <p><a href="mailto:info@marttattoo.it">info@marttattoo.it</a></p>
+        <p>Via Raffaele Comes 19, 70032 Bitonto (BA)</p>
+        <p>Partita IVA: 01234567890</p>
+        <p><a href="https://www.instagram.com/marttattooo/" target="_blank" rel="noopener">Instagram</a></p>
+      </div>
+    </div>
+
+    <div class="container copy tiny">
+      © <span id="year"></span> Emanuele Amendolaggine — Mart Tattoo — Realizzato da Davide D'Angelo
+    </div>
+  </footer>
+
+  <!-- JS -->
   <script type="module" src="../js/app.js?v=2"></script>
+  <script>
+    // Data "Aggiornati"
+    document.getElementById('tcDate')?.replaceChildren(
+      new Date().toLocaleDateString('it-IT', { day:'2-digit', month:'2-digit', year:'numeric' })
+    );
+  </script>
 </body>
 </html>

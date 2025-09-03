@@ -5,32 +5,146 @@
   <title>Policy prenotazioni — Mart Tattoo</title>
   <meta name="description" content="Regole su depositi, cancellazioni, ritardi e idoneità.">
   <link rel="stylesheet" href="../css/style.css"/>
+  <link rel="stylesheet" href="../css/policy.css"/>
 </head>
 <body>
-  <header class="site-header">…</header>
-  <main class="section container">
-    <div class="section__head"><h1 class="section__title">Policy prenotazioni</h1><p class="section__sub">Regole chiare per lavorare al meglio</p></div>
-    <article class="card" style="padding:20px">
-      <h3>Deposito & conferma</h3>
-      <p>Per bloccare la data è richiesto un <b>deposito</b> (es. €50/€100), scalato dal prezzo finale. La prenotazione si considera confermata solo al ricevimento del deposito.</p>
+  <!-- Header identico -->
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="../index/index.html#top" aria-label="Home">
+        <img src="../media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Logo Emanuele Amendolaggine" class="brand__logo" />
+        <span class="brand__name">Mart Tattoo</span>
+      </a>
 
-      <h3>Cancellazioni & spostamenti</h3>
-      <ul>
-        <li>Spostamento gratuito fino a <b>48 ore</b> prima dell’appuntamento.</li>
-        <li>Cancellazioni oltre il termine o no-show: <b>deposito trattenuto</b>.</li>
-      </ul>
+      <nav class="nav__links" aria-label="Navigazione principale">
+        <a href="../index/index.html#portfolio" class="nav__link">Portfolio</a>
+        <a href="../index/index.html#studio" class="nav__link">Studio</a>
+        <a href="../index/index.html#booking" class="btn btn--primary">Prenota</a>
+      </nav>
 
-      <h3>Ritardi</h3>
-      <p>Oltre <b>15 minuti</b> lo slot può essere riassegnato e potrebbe essere necessario riprenotare.</p>
+      <button class="nav__burger" aria-label="Apri menù" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
 
-      <h3>Minorenni & documenti</h3>
-      <p>Servono i requisiti di legge. Portare <b>documento valido</b> il giorno dell’appuntamento.</p>
+    <div class="mobile-menu" hidden>
+      <a href="../index/index.html#portfolio" class="nav__link">Portfolio</a>
+      <a href="../index/index.html#studio" class="nav__link">Studio</a>
+      <a href="../index/index.html#booking" class="btn btn--primary w-full">Prenota</a>
+    </div>
+  </header>
 
-      <h3>Salute & idoneità</h3>
-      <p>Segnala allergie, farmaci anticoagulanti, gravidanza. Lo studio si riserva di rifiutare lavori non idonei o in condizioni igienico/sanitarie non adeguate.</p>
-    </article>
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero hero--compact container">
+      <div class="hero__logo">
+        <img src="../media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Monogramma EA" />
+      </div>
+      <h1 class="hero__title">Policy prenotazioni</h1>
+      <p class="hero__tag">Regole chiare per lavorare al meglio: deposito, spostamenti, ritardi e idoneità.</p>
+      <div class="hero__cta">
+        <a class="btn btn--primary" href="../index/index.html#booking">Vai al calendario</a>
+      </div>
+    </section>
+
+    <!-- CONTENUTO -->
+    <section class="section container">
+      <div class="section__head">
+        <h2 class="section__title">Regole principali</h2>
+        <p class="section__sub">Cosa sapere prima di inviare la richiesta.</p>
+      </div>
+
+      <div class="policy-grid">
+        <article class="card card--pad">
+          <h3>Deposito & conferma</h3>
+          <p>Per bloccare la data è richiesto un <b>deposito</b> (es. €50/€100), scalato dal prezzo finale. La prenotazione è confermata solo al ricevimento del deposito.</p>
+        </article>
+
+        <article class="card card--pad">
+          <h3>Cancellazioni & spostamenti</h3>
+          <ul class="bullets">
+            <li>Spostamento gratuito fino a <b>48 ore</b> prima dell’appuntamento.</li>
+            <li>Cancellazioni oltre il termine o no-show: <b>deposito trattenuto</b>.</li>
+          </ul>
+        </article>
+
+        <article class="card card--pad">
+          <h3>Ritardi</h3>
+          <p>Oltre <b>15 minuti</b> lo slot può essere riassegnato e potrebbe essere necessario riprenotare per non impattare i clienti successivi.</p>
+        </article>
+
+        <article class="card card--pad">
+          <h3>Minorenni & documenti</h3>
+          <p>Si opera solo nel rispetto della normativa vigente e con <b>consenso scritto</b> dei genitori/tutori dove richiesto. Porta un <b>documento valido</b> il giorno dell’appuntamento.</p>
+        </article>
+
+        <article class="card card--pad">
+          <h3>Salute & idoneità</h3>
+          <p>Segnala eventuali <b>allergie</b>, terapie <b>anticoagulanti</b>, <b>gravidanza</b> o condizioni particolari. Lo studio può rifiutare lavori non idonei o in condizioni igienico-sanitarie non adeguate.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section container">
+      <div class="card card--pad cta">
+        <div class="cta__row">
+          <div>
+            <h3 style="margin:0 0 6px">Tutto chiaro?</h3>
+            <p class="tiny">Se hai dubbi su un caso specifico, scrivimi; altrimenti scegli data e orario dal calendario.</p>
+          </div>
+          <div class="cta__actions">
+            <a class="btn btn--ghost" href="https://www.instagram.com/marttattooo/" target="_blank" rel="noopener">Instagram</a>
+            <a class="btn btn--primary" href="../index/index.html#booking">Prenota ora</a>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
-  <footer class="site-footer">…</footer>
+
+  <!-- Footer identico -->
+  <footer class="site-footer">
+    <div class="container grid--footer">
+      <nav aria-label="Link utili">
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="/html/index.html#portfolio">Portfolio</a></li>
+          <li><a href="/html/index.html#studio">Dove siamo</a></li>
+          <li><a href="/html/index.html#booking">Prenota</a></li>
+          <li><a href="/pages/come-funziona.html">Come funziona la prenotazione</a></li>
+          <li><a href="/pages/faq.html">FAQ</a></li>
+          <li><a href="/pages/aftercare.html">Aftercare</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Legale">
+        <h4>Info & Policy</h4>
+        <ul>
+          <li><a href="/pages/policy-prenotazioni.html">Policy prenotazioni</a></li>
+          <li><a href="/pages/privacy.html">Privacy</a></li>
+          <li><a href="/pages/cookie.html">Cookie</a></li>
+        <li><a href="/pages/gestisci-dati.html">Gestisci Cookie</a></li>
+          <li><a href="/pages/termini.html">Termini e condizioni</a></li>
+          <li><a href="/pages/accessibilita.html">Accessibilità</a></li>
+        </ul>
+      </nav>
+
+      <div class="contacts" aria-label="Contatti">
+        <h4>Contatti</h4>
+        <p><a href="tel:+393347363499">+39 334 736 3499</a></p>
+        <p><a href="mailto:info@marttattoo.it">info@marttattoo.it</a></p>
+        <p>Via Raffaele Comes 19, 70032 Bitonto (BA)</p>
+        <p>Partita IVA: 01234567890</p>
+        <p><a href="https://www.instagram.com/marttattooo/" target="_blank" rel="noopener">Instagram</a></p>
+      </div>
+    </div>
+
+    <div class="container copy tiny">
+      © <span id="year"></span> Emanuele Amendolaggine — Mart Tattoo — Realizzato da Davide D'Angelo
+    </div>
+  </footer>
+
+  <!-- JS generale (nav mobile + year) -->
   <script type="module" src="../js/app.js?v=2"></script>
 </body>
 </html>

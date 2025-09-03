@@ -1,0 +1,47 @@
+/* =========================================================
+   GESTISCI DATI — Estensioni fedeli al CSS primario
+   (solo classi additive, nessun override globale)
+   ========================================================= */
+
+/* Spaziature coerenti */
+.card--pad{ padding:16px; border-radius:var(--radius); }
+@media (min-width:700px){ .card--pad{ padding:22px; } }
+
+.hero--compact{ padding:56px 0 28px; }
+@media (max-width:760px){ .hero--compact{ padding:40px 0 20px; } }
+
+/* Head più stretta per form */
+.section__head--tight .section__title{ margin-bottom:6px; }
+
+/* Consensi */
+.consent{
+  padding:8px 0;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.consent__item{
+  display:flex; align-items:flex-start; gap:10px;
+}
+.consent__item input{ margin-top:2px; }
+
+/* Griglia info extra */
+.gdpr-grid{
+  display:grid; gap:22px;
+}
+@media (min-width:900px){
+  .gdpr-grid{ grid-template-columns:repeat(2,1fr); }
+}
+
+/* Pulsanti in riga */
+.cta__actions{ display:flex; gap:10px; flex-wrap:wrap; }
+
+/* Hint GDPR */
+.gdpr-hint{
+  padding:6px 0 0;
+  color:var(--muted);
+}
+
+/* Accessibilità / motion */
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; }
+}

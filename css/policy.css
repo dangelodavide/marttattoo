@@ -1,0 +1,42 @@
+/* =========================================================
+   POLICY — Estensioni fedeli al CSS primario
+   (nessun override globale, solo classi additive)
+   ========================================================= */
+
+/* Card con padding coerente */
+.card--pad{ padding:16px; border-radius:var(--radius); }
+@media (min-width:700px){ .card--pad{ padding:22px; } }
+
+/* Hero compatto come nelle altre pagine informative */
+.hero--compact{ padding:56px 0 28px; }
+@media (max-width:760px){ .hero--compact{ padding:40px 0 20px; } }
+
+/* Griglia delle policy: 1 col su mobile, 2-3 col su desktop */
+.policy-grid{
+  display:grid; gap:22px;
+}
+@media (min-width:900px){
+  .policy-grid{ grid-template-columns:repeat(2, 1fr); }
+}
+@media (min-width:1100px){
+  .policy-grid{ grid-template-columns:repeat(3, 1fr); }
+}
+
+/* Bulleted list coerente con tema (neutra) */
+.bullets{
+  margin:0; padding-left:18px;
+  display:grid; gap:8px;
+}
+.bullets li{ margin:0; }
+
+/* CTA in chiusura */
+.cta__row{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px; flex-wrap:wrap;
+}
+.cta__actions{ display:flex; gap:10px; flex-wrap:wrap; }
+
+/* Accessibilità */
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; }
+}

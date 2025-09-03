@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Gestisci i tuoi dati — Mart Tattoo</title>
+  <meta name="description" content="Richiedi la cancellazione dei tuoi dati inserendo nome e numero di telefono.">
+  <link rel="stylesheet" href="../css/style.css"/>
+  <link rel="stylesheet" href="../css/gestisci.css"/>
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="../html/index.html#top" aria-label="Home">
+        <img src="../media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Logo Emanuele Amendolaggine" class="brand__logo" />
+        <span class="brand__name">Mart Tattoo</span>
+      </a>
+      <nav class="nav__links" aria-label="Navigazione principale">
+        <a href="../html/index.html#portfolio" class="nav__link">Portfolio</a>
+        <a href="../html/index.html#studio" class="nav__link">Studio</a>
+        <a href="../html/index.html#booking" class="btn btn--primary">Prenota</a>
+      </nav>
+      <button class="nav__burger" aria-label="Apri menù" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" hidden>
+      <a href="../index/index.html#portfolio" class="nav__link">Portfolio</a>
+      <a href="../index/index.html#studio" class="nav__link">Studio</a>
+      <a href="../index/index.html#booking" class="btn btn--primary w-full">Prenota</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero hero--compact container">
+      <div class="hero__logo">
+        <img src="../media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Monogramma EA" />
+      </div>
+      <h1 class="hero__title">Gestisci i tuoi dati</h1>
+      <p class="hero__tag">Inserisci <b>Nome</b> e <b>Numero</b> e richiedi la <b>cancellazione</b> dei tuoi dati.</p>
+      <div class="hero__cta">
+        <a class="btn btn--ghost" href="../pages/privacy.html">Leggi la Privacy</a>
+        <button class="btn" id="cookiePrefs">Preferenze cookie</button>
+      </div>
+    </section>
+
+    <!-- FORM -->
+    <section class="section container">
+      <div class="card card--pad">
+        <div class="section__head section__head--tight">
+          <h2 class="section__title">Richiesta cancellazione dati</h2>
+          <p class="section__sub">Compila i campi: ti confermeremo l’esito sul numero indicato.</p>
+        </div>
+
+        <form class="form" id="eraseForm" novalidate>
+          <div class="field">
+            <label for="name">Nome e cognome</label>
+            <input id="name" name="name" required placeholder="Mario Rossi" />
+          </div>
+
+          <div class="field">
+            <label for="phone">Numero di telefono</label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              inputmode="tel"
+              autocomplete="tel"
+              required
+              placeholder="+39 333 123 4567"
+              pattern="^\+?\d[\d\s\-]{6,}$"
+              aria-describedby="phoneHelp"
+            />
+            <small id="phoneHelp" class="tiny">Formato libero (+39 opzionale, spazi o trattini ok).</small>
+          </div>
+
+          <div class="field">
+            <label for="notes">Note (opzionale)</label>
+            <textarea id="notes" name="notes" placeholder="Es. cancella tutte le richieste associate al mio numero."></textarea>
+          </div>
+
+          <div class="consent">
+            <label class="consent__item">
+              <input type="checkbox" id="confirmOwn" required />
+              <span>Dichiaro di essere il titolare del numero indicato e richiedo la cancellazione dei miei dati.</span>
+            </label>
+          </div>
+
+          <div class="gdpr-hint tiny">
+            Elaboriamo questa richiesta per tutelare i tuoi diritti GDPR. Se necessario, potremmo chiederti una verifica d’identità.
+          </div>
+
+          <button class="btn btn--primary" type="submit">Richiedi cancellazione</button>
+          <output id="formMsg" class="form-msg" role="status" aria-live="polite"></output>
+        </form>
+      </div>
+    </section>
+
+    <!-- INFO EXTRA -->
+    <section class="section container">
+      <div class="grid gdpr-grid">
+        <article class="card card--pad">
+          <h3>Cosa succede dopo?</h3>
+          <ul class="bullets">
+            <li>Verifichiamo corrispondenza <b>numero ↔ dati</b>.</li>
+            <li>Cancelliamo i dati che ti riguardano (salvo obblighi di legge).</li>
+            <li>Ti inviamo una <b>conferma</b> della chiusura richiesta.</li>
+          </ul>
+        </article>
+        <article class="card card--pad">
+          <h3>Alternative</h3>
+          <p class="tiny">Preferisci email? Scrivi a <a href="mailto:info@marttattoo.it">info@marttattoo.it</a> con oggetto <i>“Cancellazione dati”</i> indicando nome e numero.</p>
+          <div class="cta__actions">
+            <a class="btn btn--ghost" href="mailto:info@marttattoo.it">Invia email</a>
+            <a class="btn" href="../index/index.html#booking">Torna alle prenotazioni</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container grid--footer">
+      <nav aria-label="Link utili">
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="/html/index.html#portfolio">Portfolio</a></li>
+          <li><a href="/html/index.html#studio">Dove siamo</a></li>
+          <li><a href="/html/index.html#booking">Prenota</a></li>
+          <li><a href="/pages/come-funziona.html">Come funziona la prenotazione</a></li>
+          <li><a href="/pages/faq.html">FAQ</a></li>
+          <li><a href="/pages/aftercare.html">Aftercare</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Legale">
+        <h4>Info & Policy</h4>
+        <ul>
+          <li><a href="/pages/policy-prenotazioni.html">Policy prenotazioni</a></li>
+          <li><a href="/pages/privacy.html">Privacy</a></li>
+          <li><a href="/pages/cookie.html">Cookie</a></li>
+        <li><a href="/pages/gestisci-dati.html">Gestisci Cookie</a></li>
+          <li><a href="/pages/termini.html">Termini e condizioni</a></li>
+          <li><a href="/pages/accessibilita.html">Accessibilità</a></li>
+        </ul>
+      </nav>
+      <div class="contacts" aria-label="Contatti">
+        <h4>Contatti</h4>
+        <p><a href="tel:+393347363499">+39 334 736 3499</a></p>
+        <p><a href="mailto:info@marttattoo.it">info@marttattoo.it</a></p>
+        <p>Via Raffaele Comes 19, 70032 Bitonto (BA)</p>
+        <p>Partita IVA: 01234567890</p>
+        <p><a href="https://www.instagram.com/marttattooo/" target="_blank" rel="noopener">Instagram</a></p>
+      </div>
+    </div>
+    <div class="container copy tiny">
+      © <span id="year"></span> Emanuele Amendolaggine — Mart Tattoo — Realizzato da Davide D'Angelo
+    </div>
+  </footer>
+
+  <!-- JS generale -->
+  <script type="module" src="../js/app.js?v=2"></script>
+  <script>
+    // Evento per aprire preferenze cookie (se usi un banner personalizzato)
+    const openPrefs = () => {
+      window.dispatchEvent(new CustomEvent('open-cookie-preferences'));
+      console.info('[cookie] Apri preferenze (evento: open-cookie-preferences)');
+    };
+    document.getElementById('cookiePrefs')?.addEventListener('click', openPrefs);
+    document.getElementById('cookiePrefsFooter')?.addEventListener('click', openPrefs);
+
+    // Handler form: solo UX + console (nessun invio)
+    const f = document.getElementById('eraseForm');
+    const msg = document.getElementById('formMsg');
+    f?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      msg.textContent = '';
+
+      const name  = document.getElementById('name').value.trim();
+      const phoneEl = document.getElementById('phone');
+      const phone = phoneEl.value.trim();
+      const notes = document.getElementById('notes').value.trim();
+      const ok = phoneEl.checkValidity() && name && document.getElementById('confirmOwn').checked;
+
+      if (!name || !phone) { msg.textContent = 'Inserisci nome e numero.'; return; }
+      if (!phoneEl.checkValidity()) { msg.textContent = 'Numero non valido.'; return; }
+      if (!document.getElementById('confirmOwn').checked) { msg.textContent = 'Devi confermare di essere il titolare del numero.'; return; }
+
+      // Qui potrai collegare Supabase (es. table: privacy_requests)
+      console.group('[privacy] Richiesta cancellazione');
+      console.log('name:', name);
+      console.log('phone:', phone);
+      console.log('notes:', notes);
+      console.log('path:', location.pathname + location.hash);
+      console.groupEnd();
+
+      msg.textContent = 'Richiesta registrata. Ti ricontatteremo a breve per conferma.';
+      f.reset();
+    });
+  </script>
+</body>
+</html>

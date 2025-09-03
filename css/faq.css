@@ -1,0 +1,55 @@
+/* =========================================================
+   FAQ — Estensioni fedeli al CSS primario
+   Usa solo le variabili e i pattern già definiti.
+   ========================================================= */
+
+/* Card con padding coerente */
+.card--pad{ padding:16px; border-radius:var(--radius); }
+@media (min-width:700px){ .card--pad{ padding:22px; } }
+
+/* Hero più compatto (come la pagina come-funziona) */
+.hero--compact{ padding:56px 0 28px; }
+@media (max-width:760px){ .hero--compact{ padding:40px 0 20px; } }
+
+/* Griglia FAQ (mobile 1 col, desktop 2 col) */
+.faq-grid{
+  display:grid;
+  gap:12px;
+}
+@media (min-width:900px){
+  .faq-grid{ grid-template-columns:repeat(2, 1fr); gap:16px; }
+}
+
+/* Stile details/summary coerente con tema */
+.faq-grid details{
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:#101010;
+  padding:12px 14px;
+}
+.faq-grid details + details{ margin-top:0; } /* gap già sulla grid */
+
+.faq-grid summary{
+  list-style:none; cursor:pointer;
+  display:flex; align-items:center; gap:8px;
+  font-weight:800; color:var(--fg);
+}
+.faq-grid summary::-webkit-details-marker{ display:none; }
+.faq-grid summary::after{
+  content:"›"; margin-left:auto;
+  transform:rotate(90deg); opacity:.7;
+  transition:transform .2s ease;
+}
+.faq-grid details[open] summary::after{ transform:rotate(-90deg); }
+.faq-grid p{ margin:8px 0 0; color:var(--muted); }
+
+/* Call-to-action row */
+.cta__row{
+  display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+}
+.cta__actions{ display:flex; gap:10px; flex-wrap:wrap; }
+
+/* Non toccare il footer globale: nessun override .site-footer qui */
+@media (prefers-reduced-motion: reduce){
+  .faq-grid summary::after{ transition:none !important; }
+}

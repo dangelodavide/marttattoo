@@ -1,0 +1,72 @@
+/* =========================================================
+   COOKIE — Estensioni fedeli al CSS primario
+   (solo classi additive, nessun override globale)
+   ========================================================= */
+
+/* Card con padding coerente */
+.card--pad{ padding:16px; border-radius:var(--radius); }
+@media (min-width:700px){ .card--pad{ padding:22px; } }
+
+/* Hero compatto */
+.hero--compact{ padding:56px 0 28px; }
+@media (max-width:760px){ .hero--compact{ padding:40px 0 20px; } }
+
+/* Callout introduttivo */
+.cookie-callout{
+  border:1px solid var(--border);
+  background:#101010;
+}
+
+/* Indice a pill (scrollabile su mobile) */
+.pillnav{
+  display:flex; flex-wrap:wrap; gap:8px;
+}
+.pillnav .pill{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 12px; border-radius:999px;
+  border:1px solid var(--border); background:#101010; color:var(--fg);
+  text-decoration:none; font-weight:800; font-size:14px;
+}
+.pillnav .pill:hover{
+  text-decoration:none; border-color:var(--accent); box-shadow:inset 0 0 0 2px var(--accent);
+}
+.pillnav .pill--muted{ color:var(--muted); border-style:dashed; }
+
+/* Griglia contenuti */
+.cookie-grid{
+  display:grid; gap:22px;
+}
+@media (min-width:900px){
+  .cookie-grid{ grid-template-columns:repeat(2, 1fr); }
+}
+
+/* Liste puntate */
+.bullets{
+  margin:0; padding-left:18px;
+  display:grid; gap:8px;
+}
+.bullets li{ margin:0; }
+
+/* Tabella cookie (CSS grid, mobile-first) */
+.cookie-table{
+  display:grid; gap:8px;
+}
+.cookie-table .row{
+  display:grid; gap:8px;
+  grid-template-columns: 1fr;
+  border:1px solid var(--border);
+  background:#101010;
+  border-radius:12px;
+  padding:10px 12px;
+}
+.cookie-table .row.head{
+  background:#0f0f0f; border-style:dashed; font-weight:800; color:var(--muted);
+}
+@media (min-width:800px){
+  .cookie-table .row{ grid-template-columns: 1fr 2fr auto 1fr; align-items:center; }
+}
+
+/* Accessibilità */
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; }
+}

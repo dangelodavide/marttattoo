@@ -1,0 +1,38 @@
+/* ================================
+   TERMINI — Add-on coerente con lo stile base
+   (niente override globali)
+   ================================ */
+
+.card--pad{ padding:16px; border-radius:var(--radius); }
+@media (min-width:700px){ .card--pad{ padding:22px; } }
+
+.hero--compact{ padding:56px 0 28px; }
+@media (max-width:760px){ .hero--compact{ padding:40px 0 20px; } }
+
+/* Indice a pill */
+.pillnav{ display:flex; flex-wrap:wrap; gap:8px; }
+.pillnav .pill{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 12px; border-radius:999px;
+  border:1px solid var(--border); background:#101010; color:var(--fg);
+  text-decoration:none; font-weight:800; font-size:14px;
+}
+.pillnav .pill:hover{
+  text-decoration:none; border-color:var(--accent); box-shadow:inset 0 0 0 2px var(--accent);
+}
+.pillnav .pill--muted{ color:var(--muted); border-style:dashed; }
+
+/* Griglia contenuti legali */
+.legal-grid{ display:grid; gap:22px; }
+@media (min-width:900px){
+  .legal-grid{ grid-template-columns:repeat(2,1fr); }
+}
+
+/* Liste */
+.bullets{ margin:0; padding-left:18px; display:grid; gap:8px; }
+.bullets li{ margin:0; }
+
+/* Accessibilità motion */
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; }
+}
