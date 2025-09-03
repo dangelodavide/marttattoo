@@ -1,29 +1,48 @@
 <!doctype html>
-<html lang="it">
+<html lang="it" data-css="css/style.css">
 <head>
-<script>
-(function () {
-  var path = location.pathname;
+  <!-- BASE dinamico + CSS loader -->
+  <script>
+  (function () {
+    // Calcola il <base> in modo adattivo:
+    // - /<repo>/(html|pages)/...  -> base="/<repo>/"
+    // - /(html|pages)/...         -> base="/"
+    // - altrimenti                -> base="/"
+    var path = location.pathname;
+    var m = path.match(/^\/([^\/]+)\/(?:html|pages)\//);
+    var baseHref = m ? ("/" + m[1] + "/") : "/";
 
-  var repoMatch = path.match(/^\/([^\/]+)\/(?:html|pages)\//);
-  var baseHref = repoMatch ? ("/" + repoMatch[1] + "/")
-                           : (/^\/(?:html|pages)\//.test(path) ? "/" : "/");
+    var base = document.createElement("base");
+    base.href = baseHref;
+    document.head.prepend(base);
 
-  var base = document.createElement("base");
-  base.href = baseHref;
-  document.head.prepend(base);
-})();
-</script>
+    // Carica 1+ CSS dichiarati su <html data-css="...">
+    var list = (document.documentElement.getAttribute("data-css") || "css/style.css")
+      .split(",")
+      .map(s => s.trim())
+      .filter(Boolean);
 
+    var seen = new Set();
+    list.forEach(href => {
+      if (seen.has(href)) return;
+      seen.add(href);
+      var link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = href;              // es. "css/style.css", "css/faq.css"
+      document.head.appendChild(link);
+    });
+  })();
+  </script>
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Emanuele Amendolaggine — Surreal Tattoo • Bitonto</title>
   <meta name="theme-color" content="#0b0b0b" />
   <meta name="description" content="Surreal tattoo a Bitonto. Linee cattive, ombre pulite. Presso Nico Catucci TattooShop. Prenota ora.">
-
-  <!-- CSS (percorso piatto) -->
-  <link rel="stylesheet" href="css/style.css" />
+  <noscript>
+    <!-- Fallback se JS è disabilitato -->
+    <link rel="stylesheet" href="css/style.css" />
+  </noscript>
 </head>
 <body>
   <!-- HEADER -->

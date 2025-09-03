@@ -1,40 +1,62 @@
 <!doctype html>
-<html lang="it">
+<html lang="it" data-css="css/style.css, css/come-funziona.css">
 <head>
+  <!-- BASE dinamico + CSS loader -->
+  <script>
+  (function () {
+    // Calcola <base> adattivo:
+    //  - /<repo>/(html|pages)/... -> "/<repo>/"
+    //  - /(html|pages)/...        -> "/"
+    //  - altrimenti               -> "/"
+    var path = location.pathname;
+    var m = path.match(/^\/([^\/]+)\/(?:html|pages)\//);
+    var baseHref = m ? ("/" + m[1] + "/") : "/";
+
+    var base = document.createElement("base");
+    base.href = baseHref;
+    document.head.prepend(base);
+
+    // Carica 1+ CSS dichiarati su <html data-css="...">
+    var list = (document.documentElement.getAttribute("data-css") || "css/style.css")
+      .split(",").map(s => s.trim()).filter(Boolean);
+
+    var seen = new Set();
+    list.forEach(href => {
+      if (seen.has(href)) return;
+      seen.add(href);
+      var link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = href;
+      document.head.appendChild(link);
+    });
+  })();
+  </script>
+
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Come funziona la prenotazione — Mart Tattoo</title>
   <meta name="theme-color" content="#0b0b0b" />
   <meta name="description" content="Guida passo passo alla prenotazione: scelta data e orario, conferma, politiche e FAQ.">
-  <script>
-(function () {
-  var path = location.pathname;
 
-  var repoMatch = path.match(/^\/([^\/]+)\/(?:html|pages)\//);
-  var baseHref = repoMatch ? ("/" + repoMatch[1] + "/")
-                           : (/^\/(?:html|pages)\//.test(path) ? "/" : "/");
-
-  var base = document.createElement("base");
-  base.href = baseHref;
-  document.head.prepend(base);
-})();
-</script>
-  <link rel="stylesheet" href="../css/style.css" />
-  <link rel="stylesheet" href="../css/come-funziona.css" />
+  <noscript>
+    <!-- Fallback (senza JS) — percorsi relativi a /pages/ -->
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/come-funziona.css" />
+  </noscript>
 </head>
 <body>
   <!-- HEADER -->
   <header class="site-header">
     <div class="container nav">
-      <a class="brand" href="../html/index.html#top" aria-label="Home">
-        <img src="../media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Logo Emanuele Amendolaggine" class="brand__logo" />
+      <a class="brand" href="html/index.html#top" aria-label="Home">
+        <img src="media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Logo Emanuele Amendolaggine" class="brand__logo" />
         <span class="brand__name">Mart Tattoo</span>
       </a>
 
       <nav class="nav__links" aria-label="Navigazione principale">
-        <a href="../html/index.html#portfolio" class="nav__link">Portfolio</a>
-        <a href="../html/index.html#studio" class="nav__link">Studio</a>
-        <a href="../html/index.html#booking" class="btn btn--primary">Prenota</a>
+        <a href="html/index.html#portfolio" class="nav__link">Portfolio</a>
+        <a href="html/index.html#studio" class="nav__link">Studio</a>
+        <a href="html/index.html#booking" class="btn btn--primary">Prenota</a>
       </nav>
 
       <button class="nav__burger" aria-label="Apri menù" aria-expanded="false">
@@ -43,9 +65,9 @@
     </div>
 
     <div class="mobile-menu" hidden>
-      <a href="../html/index.html#portfolio" class="nav__link">Portfolio</a>
-      <a href="../html/index.html#studio" class="nav__link">Studio</a>
-      <a href="../html/index.html#booking" class="btn btn--primary w-full">Prenota</a>
+      <a href="html/index.html#portfolio" class="nav__link">Portfolio</a>
+      <a href="html/index.html#studio" class="nav__link">Studio</a>
+      <a href="html/index.html#booking" class="btn btn--primary w-full">Prenota</a>
     </div>
   </header>
 
@@ -53,13 +75,13 @@
     <!-- HERO -->
     <section class="hero container">
       <div class="hero__logo">
-        <img src="../media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Monogramma EA" />
+        <img src="media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Monogramma EA" />
       </div>
       <h1 class="hero__title">Come funziona la prenotazione</h1>
       <p class="hero__tag">Tutto il flusso in 3 minuti: cosa succede prima, durante e dopo la richiesta.</p>
 
       <div class="hero__cta">
-        <a class="btn btn--primary" href="../index/index.html#booking">Vai al calendario</a>
+        <a class="btn btn--primary" href="html/index.html#booking">Vai al calendario</a>
       </div>
     </section>
 
@@ -180,73 +202,55 @@
           <div class="studio__actions">
             <a class="btn btn--primary" href="tel:+393392012755">Chiama</a>
             <a class="btn btn--primary" target="_blank" rel="noopener" href="https://share.google/Dt0GaSqsUY3ywAw4H">Apri mappe</a>
-            <a class="btn" href="../index/index.html#booking">Prenota ora</a>
+            <a class="btn" href="html/index.html#booking">Prenota ora</a>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-<footer class="site-footer">
-  <div class="container grid--footer">
-    <nav aria-label="Link utili">
-      <h4>Studio</h4>
-      <ul>
-        <li><a href="/html/index.html#portfolio">Portfolio</a></li>
-        <li><a href="/html/index.html#studio">Dove siamo</a></li>
-        <li><a href="/html/index.html#booking">Prenota</a></li>
-        <li><a href="/pages/come-funziona.html">Come funziona la prenotazione</a></li>
-        <li><a href="/pages/faq.html">FAQ</a></li>
-        <li><a href="/pages/aftercare.html">Aftercare</a></li>
-      </ul>
-    </nav>
+  <footer class="site-footer">
+    <div class="container grid--footer">
+      <nav aria-label="Link utili">
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="html/index.html#portfolio">Portfolio</a></li>
+          <li><a href="html/index.html#studio">Dove siamo</a></li>
+          <li><a href="html/index.html#booking">Prenota</a></li>
+          <li><a href="pages/come-funziona.html" aria-current="page">Come funziona la prenotazione</a></li>
+          <li><a href="pages/faq.html">FAQ</a></li>
+          <li><a href="pages/aftercare.html">Aftercare</a></li>
+        </ul>
+      </nav>
 
-    <nav aria-label="Legale">
-      <h4>Info & Policy</h4>
-      <ul>
-        <li><a href="/pages/policy-prenotazioni.html">Policy prenotazioni</a></li>
-        <li><a href="/pages/privacy.html">Privacy</a></li>
-        <li><a href="/pages/cookie.html">Cookie</a></li>
-        <li><a href="/pages/gestisci-dati.html">Gestisci Cookie</a></li>
-        <li><a href="/pages/termini.html">Termini e condizioni</a></li>
-        <li><a href="/pages/accessibilita.html">Accessibilità</a></li>
-      </ul>
-    </nav>
+      <nav aria-label="Legale">
+        <h4>Info & Policy</h4>
+        <ul>
+          <li><a href="pages/policy-prenotazioni.html">Policy prenotazioni</a></li>
+          <li><a href="pages/privacy.html">Privacy</a></li>
+          <li><a href="pages/cookie.html">Cookie</a></li>
+          <li><a href="pages/gestisci-dati.html">Gestisci Cookie</a></li>
+          <li><a href="pages/termini.html">Termini e condizioni</a></li>
+          <li><a href="pages/accessibilita.html">Accessibilità</a></li>
+        </ul>
+      </nav>
 
-    <div class="contacts" aria-label="Contatti">
-      <h4>Contatti</h4>
-      <p><a href="tel:+393347363499">+39 334 736 3499</a></p>
-      <p><a href="mailto:info@marttattoo.it">info@marttattoo.it</a></p>
-      <p>Via Raffaele Comes 19, 70032 Bitonto (BA)</p>
-      <p>Partita IVA: 01234567890</p>
-      <p><a href="https://www.instagram.com/marttattooo/" target="_blank" rel="noopener">Instagram</a></p>
+      <div class="contacts" aria-label="Contatti">
+        <h4>Contatti</h4>
+        <p><a href="tel:+393347363499">+39 334 736 3499</a></p>
+        <p><a href="mailto:info@marttattoo.it">info@marttattoo.it</a></p>
+        <p>Via Raffaele Comes 19, 70032 Bitonto (BA)</p>
+        <p>Partita IVA: 01234567890</p>
+        <p><a href="https://www.instagram.com/marttattooo/" target="_blank" rel="noopener">Instagram</a></p>
+      </div>
     </div>
-  </div>
 
-  <div class="container copy tiny">
-    © <span id="year"></span> Emanuele Amendolaggine — Mart Tattoo — Realizzato da Davide D'Angelo
-  </div>
-</footer>
+    <div class="container copy tiny">
+      © <span id="year"></span> Emanuele Amendolaggine — Mart Tattoo — Realizzato da Davide D'Angelo
+    </div>
+  </footer>
 
-  <!-- JS (riusa il tuo app.js per anno footer e menù mobile) -->
-  <script type="module">
-    // mini-nav mobile reuse
-    const btn = document.querySelector(".nav__burger");
-    const menu = document.querySelector(".mobile-menu");
-    if (btn && menu) {
-      btn.addEventListener("click", () => {
-        const open = !menu.hasAttribute("hidden");
-        menu.toggleAttribute("hidden");
-        btn.setAttribute("aria-expanded", String(!open));
-      });
-      menu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => {
-        menu.setAttribute("hidden", "");
-        btn.setAttribute("aria-expanded", "false");
-      }));
-    }
-    // anno footer
-    const y = document.getElementById("year");
-    if (y) y.textContent = new Date().getFullYear();
-  </script>
+  <!-- JS -->
+  <script type="module" src="js/app.js?v=2"></script>
 </body>
 </html>

@@ -1,46 +1,69 @@
 <!doctype html>
-<html lang="it">
+<html lang="it" data-css="css/style.css, css/gestisci.css">
 <head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <!-- BASE dinamico + CSS loader -->
+  <script>
+  (function () {
+    // Calcola <base> adattivo:
+    //  - /<repo>/(html|pages)/... -> "/<repo>/"
+    //  - /(html|pages)/...        -> "/"
+    //  - altrimenti               -> "/"
+    var path = location.pathname;
+    var m = path.match(/^\/([^\/]+)\/(?:html|pages)\//);
+    var baseHref = m ? ("/" + m[1] + "/") : "/";
+
+    var base = document.createElement("base");
+    base.href = baseHref;
+    document.head.prepend(base);
+
+    // Carica 1+ CSS dichiarati su <html data-css="...">
+    var list = (document.documentElement.getAttribute("data-css") || "css/style.css")
+      .split(",").map(s => s.trim()).filter(Boolean);
+
+    var seen = new Set();
+    list.forEach(href => {
+      if (seen.has(href)) return;
+      seen.add(href);
+      var link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = href;
+      document.head.appendChild(link);
+    });
+  })();
+  </script>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Gestisci i tuoi dati — Mart Tattoo</title>
   <meta name="description" content="Richiedi la cancellazione dei tuoi dati inserendo nome e numero di telefono.">
-  <script>
-(function () {
-  var path = location.pathname;
 
-  var repoMatch = path.match(/^\/([^\/]+)\/(?:html|pages)\//);
-  var baseHref = repoMatch ? ("/" + repoMatch[1] + "/")
-                           : (/^\/(?:html|pages)\//.test(path) ? "/" : "/");
-
-  var base = document.createElement("base");
-  base.href = baseHref;
-  document.head.prepend(base);
-})();
-</script>
-  <link rel="stylesheet" href="../css/style.css"/>
-  <link rel="stylesheet" href="../css/gestisci.css"/>
+  <noscript>
+    <!-- Fallback (senza JS) — percorsi relativi a /pages/ -->
+    <link rel="stylesheet" href="../css/style.css"/>
+    <link rel="stylesheet" href="../css/gestisci.css"/>
+  </noscript>
 </head>
 <body>
-  <!-- Header -->
+  <!-- HEADER -->
   <header class="site-header">
     <div class="container nav">
-      <a class="brand" href="../html/index.html#top" aria-label="Home">
-        <img src="../media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Logo Emanuele Amendolaggine" class="brand__logo" />
+      <a class="brand" href="html/index.html#top" aria-label="Home">
+        <img src="media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Logo Emanuele Amendolaggine" class="brand__logo" />
         <span class="brand__name">Mart Tattoo</span>
       </a>
       <nav class="nav__links" aria-label="Navigazione principale">
-        <a href="../html/index.html#portfolio" class="nav__link">Portfolio</a>
-        <a href="../html/index.html#studio" class="nav__link">Studio</a>
-        <a href="../html/index.html#booking" class="btn btn--primary">Prenota</a>
+        <a href="html/index.html#portfolio" class="nav__link">Portfolio</a>
+        <a href="html/index.html#studio" class="nav__link">Studio</a>
+        <a href="html/index.html#booking" class="btn btn--primary">Prenota</a>
       </nav>
       <button class="nav__burger" aria-label="Apri menù" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
     <div class="mobile-menu" hidden>
-      <a href="../html/index.html#portfolio" class="nav__link">Portfolio</a>
-      <a href="../html/index.html#studio" class="nav__link">Studio</a>
-      <a href="../html/index.html#booking" class="btn btn--primary w-full">Prenota</a>
+      <a href="html/index.html#portfolio" class="nav__link">Portfolio</a>
+      <a href="html/index.html#studio" class="nav__link">Studio</a>
+      <a href="html/index.html#booking" class="btn btn--primary w-full">Prenota</a>
     </div>
   </header>
 
@@ -48,12 +71,12 @@
     <!-- HERO -->
     <section class="hero hero--compact container">
       <div class="hero__logo">
-        <img src="../media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Monogramma EA" />
+        <img src="media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Monogramma EA" />
       </div>
       <h1 class="hero__title">Gestisci i tuoi dati</h1>
       <p class="hero__tag">Inserisci <b>Nome</b> e <b>Numero</b> e richiedi la <b>cancellazione</b> dei tuoi dati.</p>
       <div class="hero__cta">
-        <a class="btn btn--ghost" href="../pages/privacy.html">Leggi la Privacy</a>
+        <a class="btn btn--ghost" href="pages/privacy.html">Leggi la Privacy</a>
         <button class="btn" id="cookiePrefs">Preferenze cookie</button>
       </div>
     </section>
@@ -126,36 +149,36 @@
           <p class="tiny">Preferisci email? Scrivi a <a href="mailto:info@marttattoo.it">info@marttattoo.it</a> con oggetto <i>“Cancellazione dati”</i> indicando nome e numero.</p>
           <div class="cta__actions">
             <a class="btn btn--ghost" href="mailto:info@marttattoo.it">Invia email</a>
-            <a class="btn" href="../index/index.html#booking">Torna alle prenotazioni</a>
+            <a class="btn" href="html/index.html#booking">Torna alle prenotazioni</a>
           </div>
         </article>
       </div>
     </section>
   </main>
 
-  <!-- Footer -->
+  <!-- FOOTER -->
   <footer class="site-footer">
     <div class="container grid--footer">
       <nav aria-label="Link utili">
         <h4>Studio</h4>
         <ul>
-          <li><a href="/html/index.html#portfolio">Portfolio</a></li>
-          <li><a href="/html/index.html#studio">Dove siamo</a></li>
-          <li><a href="/html/index.html#booking">Prenota</a></li>
-          <li><a href="/pages/come-funziona.html">Come funziona la prenotazione</a></li>
-          <li><a href="/pages/faq.html">FAQ</a></li>
-          <li><a href="/pages/aftercare.html">Aftercare</a></li>
+          <li><a href="html/index.html#portfolio">Portfolio</a></li>
+          <li><a href="html/index.html#studio">Dove siamo</a></li>
+          <li><a href="html/index.html#booking">Prenota</a></li>
+          <li><a href="pages/come-funziona.html">Come funziona la prenotazione</a></li>
+          <li><a href="pages/faq.html">FAQ</a></li>
+          <li><a href="pages/aftercare.html">Aftercare</a></li>
         </ul>
       </nav>
       <nav aria-label="Legale">
         <h4>Info & Policy</h4>
         <ul>
-          <li><a href="/pages/policy-prenotazioni.html">Policy prenotazioni</a></li>
-          <li><a href="/pages/privacy.html">Privacy</a></li>
-          <li><a href="/pages/cookie.html">Cookie</a></li>
-        <li><a href="/pages/gestisci-dati.html">Gestisci Cookie</a></li>
-          <li><a href="/pages/termini.html">Termini e condizioni</a></li>
-          <li><a href="/pages/accessibilita.html">Accessibilità</a></li>
+          <li><a href="pages/policy-prenotazioni.html">Policy prenotazioni</a></li>
+          <li><a href="pages/privacy.html">Privacy</a></li>
+          <li><a href="pages/cookie.html">Cookie</a></li>
+          <li><a href="pages/gestisci-dati.html" aria-current="page">Gestisci Cookie</a></li>
+          <li><a href="pages/termini.html">Termini e condizioni</a></li>
+          <li><a href="pages/accessibilita.html">Accessibilità</a></li>
         </ul>
       </nav>
       <div class="contacts" aria-label="Contatti">
@@ -172,18 +195,18 @@
     </div>
   </footer>
 
-  <!-- JS generale -->
-  <script type="module" src="../js/app.js?v=2"></script>
+  <!-- JS -->
+  <script type="module" src="js/app.js?v=2"></script>
   <script>
-    // Evento per aprire preferenze cookie (se usi un banner personalizzato)
+    // Evento per aprire preferenze cookie (se gestito nel tuo JS)
     const openPrefs = () => {
       window.dispatchEvent(new CustomEvent('open-cookie-preferences'));
-      console.info('[cookie] Apri preferenze (evento: open-cookie-preferences)');
+      console.info('[cookie] open-cookie-preferences');
     };
     document.getElementById('cookiePrefs')?.addEventListener('click', openPrefs);
     document.getElementById('cookiePrefsFooter')?.addEventListener('click', openPrefs);
 
-    // Handler form: solo UX + console (nessun invio)
+    // Handler form: solo UX + console (integra poi con Supabase se vuoi)
     const f = document.getElementById('eraseForm');
     const msg = document.getElementById('formMsg');
     f?.addEventListener('submit', (e) => {
@@ -194,18 +217,13 @@
       const phoneEl = document.getElementById('phone');
       const phone = phoneEl.value.trim();
       const notes = document.getElementById('notes').value.trim();
-      const ok = phoneEl.checkValidity() && name && document.getElementById('confirmOwn').checked;
 
       if (!name || !phone) { msg.textContent = 'Inserisci nome e numero.'; return; }
       if (!phoneEl.checkValidity()) { msg.textContent = 'Numero non valido.'; return; }
       if (!document.getElementById('confirmOwn').checked) { msg.textContent = 'Devi confermare di essere il titolare del numero.'; return; }
 
-      // Qui potrai collegare Supabase (es. table: privacy_requests)
       console.group('[privacy] Richiesta cancellazione');
-      console.log('name:', name);
-      console.log('phone:', phone);
-      console.log('notes:', notes);
-      console.log('path:', location.pathname + location.hash);
+      console.log({ name, phone, notes, path: location.pathname + location.hash });
       console.groupEnd();
 
       msg.textContent = 'Richiesta registrata. Ti ricontatteremo a breve per conferma.';
