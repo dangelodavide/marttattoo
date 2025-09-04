@@ -4,10 +4,6 @@
   <!-- BASE dinamico + CSS loader -->
   <script>
   (function () {
-    // Calcola il <base> in modo adattivo:
-    // - /<repo>/(html|pages)/...  -> base="/<repo>/"
-    // - /(html|pages)/...         -> base="/"
-    // - altrimenti                -> base="/"
     var path = location.pathname;
     var m = path.match(/^\/([^\/]+)\/(?:html|pages)\//);
     var baseHref = m ? ("/" + m[1] + "/") : "/";
@@ -16,7 +12,6 @@
     base.href = baseHref;
     document.head.prepend(base);
 
-    // Carica 1+ CSS dichiarati su <html data-css="...">
     var list = (document.documentElement.getAttribute("data-css") || "css/style.css")
       .split(",")
       .map(s => s.trim())
@@ -28,7 +23,7 @@
       seen.add(href);
       var link = document.createElement("link");
       link.rel = "stylesheet";
-      link.href = href;              // es. "css/style.css", "css/faq.css"
+      link.href = href;            
       document.head.appendChild(link);
     });
   })();

@@ -368,34 +368,79 @@ function closeLightbox() {
     }
   }
 
-  async function createAppointment({ name, phone, style, notes, dateObj, slotStr }) {
-    const day = dateKey(dateObj);
+async function createAppointment({ name, phone, style, notes, dateObj, slotStr }) {
+  const day = dateKey(dateObj); // "YYYY-MM-DD"
 
-    const current = await countSlot(dateObj, slotStr);
-    if (current >= MAX_PER_SLOT) return { ok:false, reason:"full" };
+  // Capienza per fascia
+  const current = await countSlot(dateObj, slotStr);
+  if (current >= MAX_PER_SLOT) return { ok: false, reason: "full" };
 
-    if (supabase) {
-      const { error } = await supabase.from("appointments").insert({
+  if (supabase) {
+    // 1) INSERT su Supabase
+    const { error } = await supabase
+      .from("appointments")
+      .insert({
         name,
         phone,
         style: style || "surrealista",
         notes: notes || null,
         date: day,
         slot: slotStr
-      }).single();
+      })
+      .single();
 
-      if (error) {
-        if (/Slot pieno/i.test(error.message)) return { ok:false, reason:"full", error };
-        if (error.code === "23505")           return { ok:false, reason:"duplicate", error };
-        console.error("[SB] insert error:", error);
-        return { ok:false, reason:"error", error };
-      }
-      return { ok:true };
-    } else {
-      lsInc(day, slotStr);
-      return { ok:true };
+    if (error) {
+      if (/Slot pieno/i.test(error.message)) return { ok: false, reason: "full", error };
+      if (error.code === "23505")           return { ok: false, reason: "duplicate", error };
+      console.error("[SB] insert error:", error);
+      return { ok: false, reason: "error", error };
     }
+
+    // 2) Notifica email via Edge Function (non blocca l'UX se fallisce)
+    try {
+      await supabase.functions.invoke("notify-booking", {
+        body: {
+          name,
+          phone,
+          style: style || "surrealista",
+          notes: notes || "",
+          date: day,        // "YYYY-MM-DD"
+          slot: slotStr,    // es. "16:30 - 19:30"
+          source: "web"
+        }
+      });
+    } catch (e) {
+      console.warn("[notify-booking] invio email fallito:", e);
+    }
+
+    return { ok: true };
+
+  } else {
+    // Fallback locale (senza Supabase): aggiorna il contatore
+    lsInc(day, slotStr);
+
+    // (Opzionale) prova comunque a inviare la notifica se il client Supabase è caricato
+    try {
+      if (typeof supabase !== "undefined" && supabase?.functions) {
+        await supabase.functions.invoke("notify-booking", {
+          body: {
+            name,
+            phone,
+            style: style || "surrealista",
+            notes: notes || "",
+            date: day,
+            slot: slotStr,
+            source: "web (fallback)"
+          }
+        });
+      }
+    } catch (e) {
+      console.warn("[notify-booking] invio email fallito in fallback:", e);
+    }
+
+    return { ok: true };
   }
+}
 
   // ===== UI =====
   function capitalizeFirst(str) { return str.charAt(0).toUpperCase() + str.slice(1); }

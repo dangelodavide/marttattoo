@@ -77,7 +77,6 @@
       <p class="hero__tag">Inserisci <b>Nome</b> e <b>Numero</b> e richiedi la <b>cancellazione</b> dei tuoi dati.</p>
       <div class="hero__cta">
         <a class="btn btn--ghost" href="pages/privacy.html">Leggi la Privacy</a>
-        <button class="btn" id="cookiePrefs">Preferenze cookie</button>
       </div>
     </section>
 
@@ -197,38 +196,67 @@
 
   <!-- JS -->
   <script type="module" src="js/app.js?v=2"></script>
-  <script>
-    // Evento per aprire preferenze cookie (se gestito nel tuo JS)
-    const openPrefs = () => {
-      window.dispatchEvent(new CustomEvent('open-cookie-preferences'));
-      console.info('[cookie] open-cookie-preferences');
-    };
-    document.getElementById('cookiePrefs')?.addEventListener('click', openPrefs);
-    document.getElementById('cookiePrefsFooter')?.addEventListener('click', openPrefs);
+  <script type="module">
+  let supabase = null;
+  try {
+    const { supabase: sb } = await import("/js/supabase.js"); // 👈 NOTA lo slash iniziale
+    supabase = sb;
+    window.supabase = supabase;
+  } catch (e) {
+    console.warn("[gestisci-dati] import supabase.js fallito:", e);
+  }
 
-    // Handler form: solo UX + console (integra poi con Supabase se vuoi)
-    const f = document.getElementById('eraseForm');
-    const msg = document.getElementById('formMsg');
-    f?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      msg.textContent = '';
+  // --- resto del codice (handler form) ---
+  const openPrefs = () => {
+    window.dispatchEvent(new CustomEvent('open-cookie-preferences'));
+    console.info('[cookie] open-cookie-preferences');
+  };
+  document.getElementById('cookiePrefs')?.addEventListener('click', openPrefs);
+  document.getElementById('cookiePrefsFooter')?.addEventListener('click', openPrefs);
 
-      const name  = document.getElementById('name').value.trim();
-      const phoneEl = document.getElementById('phone');
-      const phone = phoneEl.value.trim();
-      const notes = document.getElementById('notes').value.trim();
+  const f   = document.getElementById('eraseForm');
+  const msg = document.getElementById('formMsg');
 
-      if (!name || !phone) { msg.textContent = 'Inserisci nome e numero.'; return; }
-      if (!phoneEl.checkValidity()) { msg.textContent = 'Numero non valido.'; return; }
-      if (!document.getElementById('confirmOwn').checked) { msg.textContent = 'Devi confermare di essere il titolare del numero.'; return; }
+  const setBusy = (b) => {
+    const btn = f?.querySelector('button[type="submit"]');
+    if (btn) { btn.disabled = !!b; btn.setAttribute('aria-busy', String(!!b)); }
+  };
 
-      console.group('[privacy] Richiesta cancellazione');
-      console.log({ name, phone, notes, path: location.pathname + location.hash });
-      console.groupEnd();
+  f?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    msg.textContent = '';
 
+    const name    = document.getElementById('name').value.trim();
+    const phoneEl = document.getElementById('phone');
+    const phone   = phoneEl.value.trim();
+    const notes   = document.getElementById('notes').value.trim();
+    const own     = document.getElementById('confirmOwn').checked;
+
+    if (!name || !phone) { msg.textContent = 'Inserisci nome e numero.'; return; }
+    if (!phoneEl.checkValidity()) { msg.textContent = 'Numero non valido.'; return; }
+    if (!own) { msg.textContent = 'Devi confermare di essere il titolare del numero.'; return; }
+
+    if (!supabase?.functions) {
+      console.warn("[notify-erasure] Supabase client non inizializzato");
+      msg.textContent = 'Si è verificato un errore. Riprova tra poco.';
+      return;
+    }
+
+    setBusy(true);
+    try {
+      await supabase.functions.invoke("notify-erasure", {
+        body: { name, phone, notes, source_path: location.pathname + location.hash }
+      });
       msg.textContent = 'Richiesta registrata. Ti ricontatteremo a breve per conferma.';
       f.reset();
-    });
-  </script>
+    } catch (err) {
+      console.warn('[notify-erasure] errore invio:', err);
+      msg.textContent = 'Si è verificato un errore. Riprova tra poco.';
+    } finally {
+      setBusy(false);
+    }
+  });
+</script>
+
 </body>
 </html>
