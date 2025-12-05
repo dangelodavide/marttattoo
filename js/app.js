@@ -228,8 +228,47 @@ function closeLightbox() {
 
   function go(to){ index = clamp(to); updateUI(); }
 
-  prev?.addEventListener("click", () => go(index - 1));
-  next?.addEventListener("click", () => go(index + 1));
+    // ===== AUTOPLAY CAROSELLO =====
+  const AUTOPLAY_DELAY = 3000; // 3s tra una pagina e l'altra
+  let autoplayTimer = null;
+
+  function startAutoplay() {
+    if (autoplayTimer) return;
+    autoplayTimer = setInterval(() => {
+      go(index + 1); // usa la logica esistente con clamp()
+    }, AUTOPLAY_DELAY);
+  }
+
+  function stopAutoplay() {
+    if (!autoplayTimer) return;
+    clearInterval(autoplayTimer);
+    autoplayTimer = null;
+  }
+  
+  prev?.addEventListener("click", () => {
+    stopAutoplay();
+    go(index - 1);
+  });
+
+  next?.addEventListener("click", () => {
+    stopAutoplay();
+    go(index + 1);
+  });
+
+  // ===== FRECCE GOTICHE SOTTO (legend) =====
+const legendPrev = document.querySelector(".legend__arrow--prev");
+const legendNext = document.querySelector(".legend__arrow--next");
+
+legendPrev?.addEventListener("click", () => {
+  stopAutoplay();
+  go(index - 1);
+});
+
+legendNext?.addEventListener("click", () => {
+  stopAutoplay();
+  go(index + 1);
+});
+
 
   track.addEventListener("click", (e) => {
     const media = e.target.closest(".slide img, .slide video");
@@ -250,10 +289,15 @@ function closeLightbox() {
   });
 
   updateUI();
+  startAutoplay();  // <— AVVIA autoplay dopo il primo render
 
   // debug helper
-  window.__refreshCarousel = async () => { slides = await populateCarousel(track); updateUI(); };
+  window.__refreshCarousel = async () => {
+    slides = await populateCarousel(track);
+    updateUI();
+  };
 })();
+
 
 /* ========== CALENDARIO + SLOTS (Supabase + fallback, cap=5) ========== */
 (function booking() {
@@ -267,6 +311,8 @@ function closeLightbox() {
   const summaryTime  = $("#summaryTime");
   const prevMonth    = $("#prevMonth");
   const nextMonth    = $("#nextMonth");
+  const daysGridNext  = $("#daysNext");
+  const nextMonthLabel = $("#nextMonthLabel");
   const form         = $("#bookingForm");
   const formMsg      = $("#formMsg");
   const yearSpan     = $("#year");
@@ -445,52 +491,116 @@ async function createAppointment({ name, phone, style, notes, dateObj, slotStr }
   // ===== UI =====
   function capitalizeFirst(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
 
-  async function renderMonth() {
-    const y = view.getFullYear();
-    const m = view.getMonth();
-    monthLabel.textContent = capitalizeFirst(new Intl.DateTimeFormat("it-IT", {
-      month:"long", year:"numeric"
-    }).format(view));
+async function renderMonth() {
+  const y = view.getFullYear();
+  const m = view.getMonth();
 
-    daysGrid.innerHTML = "";
-    const first = new Date(y, m, 1);
-    let start = (first.getDay() + 6) % 7; // lun=0
-    const daysInMonth = new Date(y, m + 1, 0).getDate();
-    const today = new Date(); today.setHours(0,0,0,0);
+  monthLabel.textContent = capitalizeFirst(
+    new Intl.DateTimeFormat("it-IT", { month:"long", year:"numeric" }).format(view)
+  );
 
-    const fullDays = await fetchMonthFullDays(view);
+  daysGrid.innerHTML = "";
+  if (daysGridNext) daysGridNext.innerHTML = "";
 
-    for (let i = 0; i < start; i++) {
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  // ===== Mese corrente =====
+  const first = new Date(y, m, 1);
+  let start = (first.getDay() + 6) % 7; // lun=0
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const fullDays = await fetchMonthFullDays(view);
+
+  // celle vuote iniziali
+  for (let i = 0; i < start; i++) {
+    const d = document.createElement("div");
+    d.className = "day";
+    d.setAttribute("aria-disabled", "true");
+    d.tabIndex = -1;
+    daysGrid.appendChild(d);
+  }
+
+  // giorni del mese corrente
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(y, m, d);
+    const key  = dateKey(date);
+    const el   = document.createElement("button");
+    el.className = "day";
+    el.textContent = d;
+
+    const disabled =
+      date < today ||            // passato
+      date.getDay() === 0 ||     // domenica chiuso
+      fullDays.has(key);         // tutte le fasce piene
+
+    if (disabled) el.setAttribute("aria-disabled", "true");
+
+    el.addEventListener("click", async () => {
+      if (disabled) return;
+      selectedDate = date;
+      // togli selezione da entrambi i mesi
+      $$(".day", daysGrid).forEach((b) => b.removeAttribute("aria-selected"));
+      if (daysGridNext) {
+        $$(".day", daysGridNext).forEach((b) => b.removeAttribute("aria-selected"));
+      }
+      el.setAttribute("aria-selected", "true");
+      await renderSlots();
+    });
+
+    daysGrid.appendChild(el);
+  }
+
+  // ===== Mese successivo (solo se esiste il blocco) =====
+  if (daysGridNext && nextMonthLabel) {
+    const next = new Date(y, m + 1, 1);
+    nextMonthLabel.textContent = capitalizeFirst(
+      new Intl.DateTimeFormat("it-IT", { month:"long", year:"numeric" }).format(next)
+    );
+
+    const fullDaysNext = await fetchMonthFullDays(next);
+
+    const firstNext = new Date(next.getFullYear(), next.getMonth(), 1);
+    let startNext = (firstNext.getDay() + 6) % 7;
+    const daysInNext = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
+
+    // celle vuote iniziali
+    for (let i = 0; i < startNext; i++) {
       const d = document.createElement("div");
       d.className = "day";
       d.setAttribute("aria-disabled", "true");
       d.tabIndex = -1;
-      daysGrid.appendChild(d);
+      daysGridNext.appendChild(d);
     }
 
-    for (let d = 1; d <= daysInMonth; d++) {
-      const date = new Date(y, m, d);
+    // giorni del mese successivo
+    for (let d = 1; d <= daysInNext; d++) {
+      const date = new Date(next.getFullYear(), next.getMonth(), d);
       const key  = dateKey(date);
-      const el = document.createElement("button");
+      const el   = document.createElement("button");
       el.className = "day";
       el.textContent = d;
 
       const disabled =
-        date < today ||            // passato
+        date < today ||            // (vale solo se il prossimo mese è già in parte nel passato)
         date.getDay() === 0 ||     // domenica chiuso
-        fullDays.has(key);         // tutte le fasce piene
+        fullDaysNext.has(key);
 
       if (disabled) el.setAttribute("aria-disabled", "true");
+
       el.addEventListener("click", async () => {
         if (disabled) return;
         selectedDate = date;
+        // togli selezione da entrambi i mesi
         $$(".day", daysGrid).forEach((b) => b.removeAttribute("aria-selected"));
+        $$(".day", daysGridNext).forEach((b) => b.removeAttribute("aria-selected"));
         el.setAttribute("aria-selected", "true");
         await renderSlots();
       });
-      daysGrid.appendChild(el);
+
+      daysGridNext.appendChild(el);
     }
   }
+}
 
   async function renderSlots() {
     slotList.innerHTML = "";
@@ -569,22 +679,68 @@ async function createAppointment({ name, phone, style, notes, dateObj, slotStr }
     const style  = $("#style")?.value || "surrealista";
     const notes  = $("#notes")?.value?.trim() || "";
 
+    const surname = $("#surname")?.value.trim() || "";
+    const size    = $("#size")?.value.trim() || "";
+    const typeEl  = document.querySelector('input[name="appointmentType"]:checked');
+    const appointmentType = typeEl ? typeEl.value : "seduta";
+    const policyAccepted = $("#policy")?.checked ?? false;
+    const refInput = $("#reference");
+
     const phoneInput = $("#phone");
     const phoneValid = phoneInput.checkValidity();
 
-    if (!name || !phone)      { formMsg.textContent = "Metti nome e numero di telefono."; return; }
-    if (!phoneValid)          { formMsg.textContent = "Numero non valido. Controlla il formato."; return; }
-    if (!selectedDate || !selectedTime) { formMsg.textContent = "Scegli giorno e ora."; return; }
+    if (!name || !surname || !phone) {
+      formMsg.textContent = "Metti nome, cognome e numero di telefono.";
+      return;
+    }
+    if (!phoneValid) {
+      formMsg.textContent = "Numero non valido. Controlla il formato.";
+      return;
+    }
+    if (!size) {
+      formMsg.textContent = "Inserisci la dimensione indicativa in centimetri.";
+      return;
+    }
+    if (!selectedDate || !selectedTime) {
+      formMsg.textContent = "Scegli giorno e ora.";
+      return;
+    }
+    if (!policyAccepted) {
+      formMsg.textContent = "Devi accettare la policy prenotazioni prima di inviare.";
+      return;
+    }
+
+    // compongo le note estese senza toccare lo schema del DB
+    const extraParts = [];
+
+    extraParts.push(`Tipo: ${appointmentType === "consulenza" ? "Consulenza" : "Seduta/tatuaggio"}`);
+    if (size) extraParts.push(`Dimensione: ${size} cm`);
+
+    if (refInput && refInput.files && refInput.files.length > 0) {
+      const names = [...refInput.files].map(f => f.name).join(", ");
+      extraParts.push(`Reference allegata: ${names}`);
+    }
+
+    const combinedNotes = [
+      extraParts.join(" • "),
+      notes
+    ].filter(Boolean).join(" // ");
+
+    // nome completo in un solo campo (la colonna esistente)
+    const fullName = `${name} ${surname}`.trim();
 
     const res = await createAppointment({
-      name, phone, style, notes,
+      name: fullName,
+      phone,
+      style,
+      notes: combinedNotes,
       dateObj: selectedDate,
       slotStr: selectedTime
     });
 
     if (!res.ok) {
       if (res.reason === "full" || /Slot pieno/i.test(res.error?.message || "")) {
-        formMsg.textContent = "💥 Peccato, qualcuno ti ha preceduto: orario appena esaurito.";
+        formMsg.textContent = "Peccato, qualcuno ti ha preceduto: orario appena esaurito.";
         await renderSlots();
         return;
       }
@@ -681,3 +837,38 @@ if (supabase) {
 
   window.__sb = { ping: sbPing, count: sbCount, insert: sbInsert, fillTo5: sbFillTo5, list: sbListRecent, reset: sbReset };
 }
+
+// BACKGROUND TRIANGOLI 3D
+(function initTrianglesBackground() {
+  const container = document.getElementById('bgTriangles');
+  if (!container) return;
+
+  const TOTAL = 200;
+
+  for (let i = 0; i < TOTAL; i++) {
+    const tri = document.createElement('div');
+    tri.className = 'tri';
+
+    // dimensione 10–50px
+    const size = 10 + Math.random() * 40;
+    // rotazione iniziale
+    const rot = Math.random() * 360;
+    // posizione nello spazio (x,y) intorno al centro
+    const x = (Math.random() * 2 - 1) * 900;  // -900..900px
+    const y = (Math.random() * 2 - 1) * 900;
+
+    // durata lenta: 20–35 secondi
+    const duration = 20 + Math.random() * 15;
+    // delay negativo per “sparpagliare” il loop
+    const delay = -Math.random() * duration;
+
+    tri.style.setProperty('--tri-size', size + 'px');
+    tri.style.setProperty('--tri-rot', rot + 'deg');
+    tri.style.setProperty('--tri-x', x + 'px');
+    tri.style.setProperty('--tri-y', y + 'px');
+    tri.style.animationDuration = duration + 's';
+    tri.style.animationDelay = delay + 's';
+
+    container.appendChild(tri);
+  }
+})();

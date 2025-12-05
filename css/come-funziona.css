@@ -7,7 +7,7 @@
   --fg-muted: #c9c9c9;
   --card: #141414;
   --border: #1f1f1f;
-  --accent: #ffd400;        
+  --accent: #c9c9c9;        
   --accent-ink: #111;
   --radius: 16px;
   --shadow: 0 10px 30px rgba(0,0,0,.35);
@@ -55,6 +55,7 @@
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: var(--space-3);
+  border-color: white;
 }
 
 .tiny{ color: var(--fg-muted); font-size: .85rem; }

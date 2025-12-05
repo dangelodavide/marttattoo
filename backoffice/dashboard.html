@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  <title>Dashboard — Backoffice Mart Tattoo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css"/>
+
+  <script src="../js/bg.js" defer></script>
+</head>
+<body>
+  <div id="bgTriangles" class="bg-triangles"></div>
+
+  <header class="site-header">
+    <div class="container nav">
+      <h1 class="section__title" style="margin:0;">Backoffice</h1>
+      <button id="logoutBtn" class="btn btn--ghost">Logout</button>
+    </div>
+  </header>
+
+  <main class="section container">
+    <h2 class="section__title">Prenotazioni</h2>
+    <p class="hero__tag">Lista appuntamenti dal database.</p>
+
+    <div class="card" style="padding:16px; overflow-x:auto;">
+      <table id="bookingsTable" style="width:100%; border-collapse:collapse; font-size:14px;">
+        <thead>
+          <tr>
+            <th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Data</th>
+            <th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Ora</th>
+            <th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Nome</th>
+            <th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Telefono</th>
+            <th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Stile</th>
+            <th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Note</th>
+            <th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Creato</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script type="module" src="../js/admin-dashboard.js"></script>
+</body>
+</html>

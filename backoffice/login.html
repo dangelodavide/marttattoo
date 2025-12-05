@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  <title>Login — Backoffice Mart Tattoo</title>
+
+  <!-- Font + CSS principale del sito -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css"/>
+
+  <script src="../js/bg.js" defer></script>
+</head>
+<body>
+  <div id="bgTriangles" class="bg-triangles"></div>
+
+  <main class="section container" style="min-height:100vh; display:grid; place-items:center;">
+    <div class="card" style="max-width:420px; width:100%; padding:24px 22px;">
+      <h1 class="hero__title" style="text-align:left; font-size:26px;">Backoffice</h1>
+      <p class="hero__tag" style="text-align:left;">Accedi per vedere le prenotazioni.</p>
+
+      <form id="loginForm" class="form" style="margin-top:18px;">
+        <div class="field">
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" type="email" required autocomplete="email"/>
+        </div>
+
+        <div class="field">
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" type="password" required autocomplete="current-password"/>
+        </div>
+
+        <button type="submit" class="btn w-full">Accedi</button>
+        <p id="loginMsg" class="form-msg" style="margin-top:8px;"></p>
+      </form>
+    </div>
+  </main>
+
+  <script type="module" src="../js/admin-login.js"></script>
+</body>
+</html>

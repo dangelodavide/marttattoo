@@ -34,12 +34,19 @@
   <title>Emanuele Amendolaggine — Surreal Tattoo • Bitonto</title>
   <meta name="theme-color" content="#0b0b0b" />
   <meta name="description" content="Surreal tattoo a Bitonto. Linee cattive, ombre pulite. Presso Nico Catucci TattooShop. Prenota ora.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <noscript>
     <!-- Fallback se JS è disabilitato -->
     <link rel="stylesheet" href="css/style.css" />
   </noscript>
 </head>
+<script src="../js/bg.js"></script>
 <body>
+  <div id="bgTriangles" class="bg-triangles"></div>
   <!-- HEADER -->
   <header class="site-header">
     <div class="container nav">
@@ -69,10 +76,11 @@
   <main id="top">
     <!-- HERO -->
     <section class="hero container">
-      <div class="hero__logo">
+      <!-- <div class="hero__logo">
         <img src="media/logo/BC357403-6BB9-48BB-B630-43656FD16E49-2.png" alt="Monogramma EA" />
-      </div>
-      <h1 class="hero__title">Surreal Tattoo • Bitonto</h1>
+      </div>-->
+      <h1 class="hero__title">MART</h1>
+      <h2 class="hero__title">Surreal Tattoo • Bitonto</h2>
       <p class="hero__tag">Tattoo artist in Bitonto — <b>Surreal blackwork</b></p>
 
       <div class="hero__cta">
@@ -86,7 +94,9 @@
         <p class="section__sub">Surrealism • Blackwork • Fine line</p>
       </div>
 
-      <figure class="carousel card" aria-roledescription="carousel" aria-label="Galleria tatuaggi">
+    <figure class="carousel card carousel--portfolio"
+        aria-roledescription="carousel"
+        aria-label="Galleria tatuaggi">
         <div class="carousel__track" id="carouselTrack"></div>
 
         <div class="carousel__controls">
@@ -96,32 +106,61 @@
 
         <div class="carousel__dots" id="dots" role="tablist" aria-label="Indicatori slides"></div>
 
-        <figcaption class="legend">
-          <span class="legend__cap" id="caption"></span>
-          <span class="legend__count" id="count">0 / 0</span>
-        </figcaption>
+       <figcaption class="legend">
+        <button class="legend__arrow legend__arrow--prev"
+                type="button"
+                aria-label="Immagine precedente">
+          ❮
+        </button>
+
+        <span class="legend__count" id="count">0 / 0</span>
+
+        <button class="legend__arrow legend__arrow--next"
+                type="button"
+                aria-label="Immagine successiva">
+          ❯
+        </button>
+      </figcaption>
+
       </figure>
     </section>
 
-    <!-- STUDIO -->
+   <!-- STUDIO -->
     <section id="studio" class="section container">
       <div class="section__head">
         <h2 class="section__title">Studio</h2>
         <p class="section__sub">Scegli la tua sede</p>
       </div>
 
-      <div class="card studio">
-        <div class="studio__info">
-          <h3 class="studio__name">Nico Catucci TattooShop</h3>
-          <p class="studio__addr">Via Raffaele Comes, 19 · 70032 Bitonto (BA)</p>
-          <p class="studio__meta">Lun–Sab <b>10:30–19:30</b> · Domenica chiuso</p>
-          <div class="studio__actions">
-            <a class="btn btn--primary" href="tel:+393392012755">Chiama</a>
-            <a class="btn btn--primary" target="_blank" rel="noopener" href="https://share.google/Dt0GaSqsUY3ywAw4H">Apri mappe</a>
+      <!-- GRID degli studi -->
+      <div class="studio-grid">
+
+        <div class="card studio">
+          <div class="studio__info">
+            <h3 class="studio__name">Nico Catucci TattooShop</h3>
+            <p class="studio__addr">Via Raffaele Comes, 19 · 70032 Bitonto (BA)</p>
+            <p class="studio__meta">Lun–Sab <b>10:30–19:30</b> · Domenica chiuso</p>
+            <div class="studio__actions">
+              <a class="btn btn--primary" href="tel:+393347363499">Chiama</a>
+              <a class="btn btn--primary" target="_blank" rel="noopener" href="https://share.google/Dt0GaSqsUY3ywAw4H">Apri mappe</a>
+            </div>
           </div>
         </div>
-      </div>
+
+        <div class="card studio">
+          <div class="studio__info">
+            <h3 class="studio__name">AveLights</h3>
+            <p class="studio__addr">P.za di Pietra, 28 · 00186 Roma (RM)</p>
+            <p class="studio__meta">Lun–Sab <b>10:30–22:00</b> · Domenica <b>10:00–19:00</b></p>
+            <div class="studio__actions">
+              <a class="btn btn--primary" href="tel:+393347363499">Chiama</a>
+              <a class="btn btn--primary" target="_blank" rel="noopener" href="https://share.google/UZA3uR4N9NZGxQryL">Apri mappe</a>
+            </div>
+          </div>
+        </div>
+      </div> 
     </section>
+
 
     <!-- BOOKING -->
     <section id="booking" class="section container">
@@ -144,6 +183,20 @@
           </div>
           <div class="cal__days" id="days" role="grid" aria-label="Seleziona un giorno"></div>
 
+          <!-- Mese successivo (solo desktop, riempie lo spazio vuoto) -->
+          <div class="cal__next" id="nextMonthBlock">
+            <h3 class="cal__month cal__month--next" id="nextMonthLabel"></h3>
+            <div class="cal__week cal__week--next" aria-hidden="true">
+              <span>L</span><span>M</span><span>M</span><span>G</span><span>V</span><span>S</span><span>D</span>
+            </div>
+            <div
+              class="cal__days cal__days--next"
+              id="daysNext"
+              role="grid"
+              aria-label="Seleziona un giorno del mese successivo">
+            </div>
+          </div>
+
           <div class="slots">
             <h4 class="slots__title">Orari</h4>
             <div class="slotlist" id="slotList" role="listbox" aria-label="Orari"></div>
@@ -152,9 +205,28 @@
 
         <!-- FORM -->
         <form class="card form" id="bookingForm" novalidate>
+            <div class="field field--radio">
+            <span class="field__label">Tipo di appuntamento</span>
+            <div class="field__options">
+              <label class="radio">
+                <input type="radio" name="appointmentType" value="seduta" checked />
+                <span>Seduta / tatuaggio</span>
+              </label>
+              <label class="radio">
+                <input type="radio" name="appointmentType" value="consulenza" />
+                <span>Solo consulenza</span>
+              </label>
+            </div>
+          </div>
           <div class="field">
-            <label for="name">Nome</label>
-            <input id="name" name="name" required placeholder="Come ti chiami?" />
+        <div class="field">
+          <label for="name">Nome</label>
+          <input id="name" name="name" required placeholder="Come ti chiami?" />
+        </div>
+        <div class="field">
+          <label for="surname">Cognome</label>
+          <input id="surname" name="surname" required placeholder="Il tuo cognome" />
+        </div>
           </div>
           <div class="field">
             <label for="phone">Numero di telefono</label>
@@ -174,13 +246,38 @@
           <div class="field">
             <label for="style">Stile</label>
             <select id="style" name="style">
-              <option value="surrealista" selected>Surrealista</option>
+              <option value="surrealista" selected>Surrealismo</option>
               <option value="blackwork">Blackwork</option>
               <option value="fineline">Fine line</option>
               <option value="realistico">Realistico</option>
               <option value="altro">Altro</option>
             </select>
           </div>
+          <div class="field">
+          <label for="size">Dimensione indicativa (cm)</label>
+          <input
+            id="size"
+            name="size"
+            type="number"
+            inputmode="decimal"
+            min="1"
+            max="200"
+            step="1"
+            placeholder="Es. 15"
+            required
+          />
+          <small class="tiny">Lato più lungo del tatuaggio, in centimetri.</small>
+        </div>
+        <div class="field">
+          <label for="reference">Reference (opzionale)</label>
+          <input
+            id="reference"
+            name="reference"
+            type="file"
+            accept="image/*,.pdf"
+          />
+          <small class="tiny">Puoi allegare una reference (foto o PDF).</small>
+        </div>
           <div class="field">
             <label for="notes">Note (opzionale)</label>
             <textarea id="notes" name="notes" placeholder="Zona, dimensioni, riferimenti…"></textarea>
@@ -190,7 +287,17 @@
             <div>Data: <strong id="summaryDate">—</strong></div>
             <div>Ora: <strong id="summaryTime">—</strong></div>
           </div>
-
+          <div class="field">
+          <label>
+            <input type="checkbox" id="policy" />
+            <span>
+              Ho letto e accetto la
+              <a href="pages/policy-prenotazioni.html" target="_blank" rel="noopener">
+                policy prenotazioni
+              </a>.
+            </span>
+          </label>
+        </div>
           <button class="btn btn--primary" type="submit">Manda richiesta</button>
           <p class="tiny">Verrai ricontattato per un primo incontro conoscitivo.</p>
           <output id="formMsg" class="form-msg" role="status"></output>

@@ -4,7 +4,7 @@
    ========================================================= */
 
 /* Spaziature coerenti */
-.card--pad{ padding:16px; border-radius:var(--radius); }
+.card--pad{ padding:16px; border-radius:var(--radius); border-color: white;}
 @media (min-width:700px){ .card--pad{ padding:22px; } }
 
 .hero--compact{ padding:56px 0 28px; }
